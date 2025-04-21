@@ -24,17 +24,23 @@ import retrofit2.Response
 import com.site7x24learn.internshipfrontend.data.model.SignupRequest
 import com.site7x24learn.internshipfrontend.data.model.SignupResponse
 import com.site7x24learn.internshipfrontend.data.network.RetrofitClient
+import java.sql.Date
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun SignUpScreen(navController:NavHostController) {
     var name by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
-    var dob by remember { mutableStateOf("") }
+     var dob by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+
+
 
     Column(
         modifier = Modifier
@@ -90,18 +96,32 @@ fun SignUpScreen(navController:NavHostController) {
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                CustomTextField("Name", name) { name = it }
-                CustomTextField("Gender", gender) { gender = it }
-                CustomTextField("Date of Birth", dob) { dob = it }
-                CustomTextField("Contact number", phone, KeyboardType.Phone) { phone = it }
-                CustomTextField("Address", address) { address = it }
-                CustomTextField("Email", email, KeyboardType.Email) { email = it }
-                CustomTextField("Enter Password", password, KeyboardType.Password, true) { password = it }
-                CustomTextField("Confirm Password", confirmPassword, KeyboardType.Password, true) { confirmPassword = it }
+                CustomTextField("Name", name,placeholder =  "Enter your Full name") { name = it }
+                CustomTextField("Gender", gender, placeholder = "Male or Female") { gender = it }
+                CustomTextField("Date of Birth", dob, placeholder = "YYYY-MM-DD") { dob = it }
+                CustomTextField("Contact number", phone, KeyboardType.Phone, placeholder = "e.g., +251912341211") { phone = it }
+                CustomTextField("Address", address, placeholder = "Enter your current address") { address = it }
+                CustomTextField("Email", email, KeyboardType.Email, placeholder = "example@email.com") { email = it }
+                CustomTextField("Enter Password", password, KeyboardType.Password, true, placeholder = "Create a strong password") { password = it }
+                CustomTextField("Confirm Password", confirmPassword, KeyboardType.Password, true, placeholder = "Re-enter your password") { confirmPassword = it }
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                         onClick = {
+                            // Inside the Button's onClick handler:
+                            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            dateFormat.isLenient = false // Disallow invalid dates like "2023-02-30"
+
+                            try {
+                                dateFormat.parse(dob) // Validate the date
+                                val signupRequest = SignupRequest(
+                                    name, gender, dob, phone, address, email, password
+                                )
+                                // Send the request...
+                            } catch (e: ParseException) {
+                                println("Invalid date format! Use YYYY-MM-DD")
+                                // Show error to the user
+                            }
                             val signupRequest = SignupRequest(
                                 name, gender, dob, phone, address, email, password
                             )
@@ -144,6 +164,7 @@ fun CustomTextField(
     value: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     isPassword: Boolean = false,
+    placeholder: String = label,
     onValueChange: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
@@ -151,7 +172,7 @@ fun CustomTextField(
         TextField(
             value = value,
             onValueChange = onValueChange,
-            placeholder = { Text(text = label) },
+            placeholder = { Text(text = placeholder) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
             modifier = Modifier
