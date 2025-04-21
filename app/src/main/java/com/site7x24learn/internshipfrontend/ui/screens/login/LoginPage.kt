@@ -38,9 +38,13 @@ import androidx.compose.material3.TextField // For Material 3 (if you're using C
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.navigation.NavHostController
+import com.site7x24learn.internshipfrontend.data.model.LoginRequest
+import com.site7x24learn.internshipfrontend.data.model.LoginResponse
+import com.site7x24learn.internshipfrontend.data.network.RetrofitClient
 
 
 @Composable
+//the login screen
 
 fun LoginScreen(navController: NavHostController) {
 
@@ -141,7 +145,36 @@ fun LoginScreen(navController: NavHostController) {
 
             // Login button
             Button(
-                {}, Modifier
+                    onClick = {
+                        val loginRequest = LoginRequest(email, password)
+
+                        RetrofitClient.apiService.login(loginRequest).enqueue(object : retrofit2.Callback<LoginResponse> {
+                            override fun onResponse(
+                                call: retrofit2.Call<LoginResponse>,
+                                response: retrofit2.Response<LoginResponse>
+                            ) {
+                                if (response.isSuccessful) {
+                                    val result = response.body()
+                                    if (result != null) {
+                                        // Navigate or show success
+                                        if (result.message=="Login successful")
+                                            println("Login successful!")
+                                        // navController.navigate("home") // Example
+                                        } else {
+                                        println("Login failed: ${result?.message}")
+                                        }
+                                    } else {
+                                    println("Login failed: ${response.message()}")
+                                    }
+                            }
+
+                            override fun onFailure(call: retrofit2.Call<LoginResponse>, t: Throwable) {
+                                println("Error: ${t.message}")
+                            }
+                        })
+
+
+                }, Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
                     .height(48.dp),

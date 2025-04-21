@@ -1,5 +1,6 @@
 package com.site7x24learn.internshipfrontend.ui.screens.login
 
+import android.view.WindowInsetsAnimation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +18,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import com.site7x24learn.internshipfrontend.data.model.SignupRequest
+import com.site7x24learn.internshipfrontend.data.model.SignupResponse
+import com.site7x24learn.internshipfrontend.data.network.RetrofitClient
 
 @Composable
 fun SignUpScreen(navController:NavHostController) {
@@ -94,9 +101,32 @@ fun SignUpScreen(navController:NavHostController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = {
-                        navController.navigate("login")
-                    },
+                        onClick = {
+                            val signupRequest = SignupRequest(
+                                name, gender, dob, phone, address, email, password
+                            )
+
+                            RetrofitClient.apiService.signup(signupRequest).enqueue(object : Callback<SignupResponse> {
+                                override fun onResponse(call: Call<SignupResponse>, response: Response<SignupResponse>) {
+                                    if (response.isSuccessful) {
+                                        val result = response.body()
+                                        if (result != null && result.success) {
+                                            println("Signup successful")
+                                            navController.navigate("login")
+                                        } else {
+                                            println("Signup failed: ${result?.message ?: "Unknown error"}")
+                                        }
+                                    } else {
+                                        println("Signup failed: ${response.message()}")
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<SignupResponse>, t: Throwable) {
+                                    println("Error: ${t.message}")
+                                }
+                            })
+                        }
+                    ,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3),
                          )
