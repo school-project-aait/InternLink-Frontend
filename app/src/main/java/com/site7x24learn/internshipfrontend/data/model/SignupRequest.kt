@@ -9,5 +9,6 @@ data class SignupRequest(
     val phone: String,
     val address: String,
     val email: String,
-    val password: String
+    val password: String,
+    val confirmPassword: String
 )

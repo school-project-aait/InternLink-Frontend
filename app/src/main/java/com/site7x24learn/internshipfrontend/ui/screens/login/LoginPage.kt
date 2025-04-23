@@ -1,6 +1,7 @@
 package com.site7x24learn.internshipfrontend.ui.screens.login
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -41,6 +42,9 @@ import androidx.navigation.NavHostController
 import com.site7x24learn.internshipfrontend.data.model.LoginRequest
 import com.site7x24learn.internshipfrontend.data.model.LoginResponse
 import com.site7x24learn.internshipfrontend.data.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 @Composable
@@ -49,6 +53,7 @@ import com.site7x24learn.internshipfrontend.data.network.RetrofitClient
 fun LoginScreen(navController: NavHostController) {
 
     AppTheme {
+        var errorMessage by remember { mutableStateOf<String?>(null) }
         // Column to hold everything
         Column(
             modifier = Modifier
@@ -92,6 +97,15 @@ fun LoginScreen(navController: NavHostController) {
                 fontSize = 18.sp,
                 modifier = Modifier.padding(bottom = 26.dp)
             )
+
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = Color.Red,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
 
             var email by remember { mutableStateOf("") }
             var password by remember { mutableStateOf("") }
@@ -145,34 +159,32 @@ fun LoginScreen(navController: NavHostController) {
 
             // Login button
             Button(
-                    onClick = {
-                        val loginRequest = LoginRequest(email, password)
-
-                        RetrofitClient.apiService.login(loginRequest).enqueue(object : retrofit2.Callback<LoginResponse> {
-                            override fun onResponse(
-                                call: retrofit2.Call<LoginResponse>,
-                                response: retrofit2.Response<LoginResponse>
-                            ) {
-                                if (response.isSuccessful) {
-                                    val result = response.body()
-                                    if (result != null) {
-                                        // Navigate or show success
-                                        if (result.message=="Login successful")
-                                            println("Login successful!")
-                                        // navController.navigate("home") // Example
-                                        } else {
-                                        println("Login failed: ${result?.message}")
-                                        }
-                                    } else {
-                                    println("Login failed: ${response.message()}")
-                                    }
+                onClick = {
+                    val loginRequest = LoginRequest(email, password)
+                    RetrofitClient.apiService.login(loginRequest).enqueue(object : Callback<LoginResponse> {
+                        override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                            if (response.isSuccessful) {
+                                errorMessage = null
+                                Log.d("Login", "Success: ${response.body()?.message}")
+                                // Navigate or do something on success
+                            } else {
+                                val errorBody = response.errorBody()?.string()
+                                try {
+                                    val jsonObject = org.json.JSONObject(errorBody)
+                                    val msg = jsonObject.optString("error")
+                                    errorMessage = msg.ifBlank { "Login failed" }
+                                } catch (e: Exception) {
+                                    errorMessage = "Unexpected error"
+                                }
+                                Log.e("Login", "Failed: $errorBody")
                             }
+                        }
 
-                            override fun onFailure(call: retrofit2.Call<LoginResponse>, t: Throwable) {
-                                println("Error: ${t.message}")
-                            }
-                        })
-
+                        override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                            errorMessage = "Network error: ${t.localizedMessage}"
+                            Log.e("Login", "Network failure: ${t.message}")
+                        }
+                    })
 
                 }, Modifier
                     .fillMaxWidth()
@@ -211,6 +223,7 @@ fun LoginScreen(navController: NavHostController) {
             }
         }
     }
+
 
 }
 

@@ -10,10 +10,10 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface ApiService {
-    @POST("/api/login") // Adjust path according to your backend route
+    @POST("api/auth/login") // Adjust path according to your backend route
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 
 //    signup
-    @POST("/api/signup")
+    @POST("api/auth/signup")
     fun signup(@Body request: SignupRequest): Call<SignupResponse>
 }

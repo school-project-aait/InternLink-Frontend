@@ -1,5 +1,6 @@
 package com.site7x24learn.internshipfrontend.ui.screens.login
 
+import android.util.Log
 import android.view.WindowInsetsAnimation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +25,7 @@ import retrofit2.Response
 import com.site7x24learn.internshipfrontend.data.model.SignupRequest
 import com.site7x24learn.internshipfrontend.data.model.SignupResponse
 import com.site7x24learn.internshipfrontend.data.network.RetrofitClient
+import org.json.JSONObject
 import java.sql.Date
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -31,9 +33,11 @@ import java.util.Locale
 
 @Composable
 fun SignUpScreen(navController:NavHostController) {
+    var signupErrorMessage by remember { mutableStateOf<String?>(null) }
+
     var name by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
-     var dob by remember { mutableStateOf("") }
+    var dob by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -69,10 +73,6 @@ fun SignUpScreen(navController:NavHostController) {
             )
 
         }
-//        Text("Intern", fontSize = 30.sp, color = Color(0xFF2196F3))
-//        Spacer(modifier = Modifier.height(8.dp))
-//        Text("Link", fontSize = 30.sp, color = Color(0xFF1B2A80))
-//        Spacer(modifier = Modifier.height(8.dp))
         Text("Let's get started!", fontSize = 34.sp, color = Color(0xFF1B2A80))
         Spacer(modifier = Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -88,6 +88,15 @@ fun SignUpScreen(navController:NavHostController) {
                 }
             )
         }
+        signupErrorMessage?.let {
+            Text(
+                text = it,
+                color = Color.Red,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.height(32.dp))
 
         Card(
@@ -107,45 +116,64 @@ fun SignUpScreen(navController:NavHostController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                        onClick = {
-                            // Inside the Button's onClick handler:
-                            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                            dateFormat.isLenient = false // Disallow invalid dates like "2023-02-30"
+                    onClick = {
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        dateFormat.isLenient = false
 
-                            try {
-                                dateFormat.parse(dob) // Validate the date
-                                val signupRequest = SignupRequest(
-                                    name, gender, dob, phone, address, email, password
-                                )
-                                // Send the request...
-                            } catch (e: ParseException) {
-                                println("Invalid date format! Use YYYY-MM-DD")
-                                // Show error to the user
-                            }
+                        try {
+                            dateFormat.parse(dob) // Validate date format
+
                             val signupRequest = SignupRequest(
-                                name, gender, dob, phone, address, email, password
+                                name, gender, dob, phone, address, email, password, confirmPassword
                             )
 
                             RetrofitClient.apiService.signup(signupRequest).enqueue(object : Callback<SignupResponse> {
                                 override fun onResponse(call: Call<SignupResponse>, response: Response<SignupResponse>) {
-                                    if (response.isSuccessful) {
-                                        val result = response.body()
-                                        if (result != null && result.success) {
-                                            println("Signup successful")
-                                            navController.navigate("login")
-                                        } else {
-                                            println("Signup failed: ${result?.message ?: "Unknown error"}")
+                                    val responseBody = response.body()
+                                    val errorBody = response.errorBody()?.string()
+
+                                    Log.d("Signup", "Raw response: ${response.raw()}")
+                                    Log.d("Signup", "Response body: $responseBody")
+                                    Log.d("Signup", "Error body: $errorBody")
+
+                                    if (response.isSuccessful && responseBody != null) {
+                                        signupErrorMessage = null
+                                        // Navigate to login or show success
+                                        navController.navigate("login") {
+                                            popUpTo("signup") { inclusive = true }
                                         }
                                     } else {
-                                        println("Signup failed: ${response.message()}")
+                                        try {
+                                            val json = JSONObject(errorBody)
+                                            signupErrorMessage = when {
+                                                json.has("errors") -> {
+                                                    val errors = json.getJSONArray("errors")
+                                                    val messages = mutableListOf<String>()
+                                                    for (i in 0 until errors.length()) {
+                                                        messages.add(errors.getJSONObject(i).getString("msg"))
+                                                    }
+                                                    messages.joinToString("\n")
+                                                }
+                                                json.has("message") -> json.getString("message") // e.g., "User already exists"
+                                                else -> "Something went wrong."
+                                            }
+                                        } catch (e: Exception) {
+                                            signupErrorMessage = "Unexpected error occurred."
+                                            Log.e("Signup", "JSON parse error: ${e.message}")
+                                        }
                                     }
                                 }
 
                                 override fun onFailure(call: Call<SignupResponse>, t: Throwable) {
-                                    println("Error: ${t.message}")
+                                    Log.e("Signup", "Network failure: ${t.message}")
+                                    signupErrorMessage = "Network error: ${t.message}"
                                 }
                             })
+
+                        } catch (e: ParseException) {
+                            signupErrorMessage = "Invalid date format! Use YYYY-MM-DD"
                         }
+                    }
                     ,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3),
