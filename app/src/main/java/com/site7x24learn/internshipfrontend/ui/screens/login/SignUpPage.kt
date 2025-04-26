@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,6 +32,11 @@ import java.sql.Date
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.OutlinedTextField
+
+
 
 @Composable
 fun SignUpScreen(navController:NavHostController) {
@@ -106,7 +113,13 @@ fun SignUpScreen(navController:NavHostController) {
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 CustomTextField("Name", name,placeholder =  "Enter your Full name") { name = it }
-                CustomTextField("Gender", gender, placeholder = "Male or Female") { gender = it }
+                GenderDropdown(
+                    label = "Gender",
+                    value = gender,
+                    placeholder = "Select Gender",
+                    onValueChange = { gender = it }
+                )
+//                CustomTextField("Gender", gender, placeholder = "Male or Female") { gender = it }
                 CustomTextField("Date of Birth", dob, placeholder = "YYYY-MM-DD") { dob = it }
                 CustomTextField("Contact number", phone, KeyboardType.Phone, placeholder = "e.g., +251912341211") { phone = it }
                 CustomTextField("Address", address, placeholder = "Enter your current address") { address = it }
@@ -206,5 +219,61 @@ fun CustomTextField(
             modifier = Modifier
                 .fillMaxWidth()
         )
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GenderDropdown(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String = label
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val options = listOf("Male", "Female")
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        Text(
+            text = label,
+            fontSize = 20.sp,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                value = value,
+                onValueChange = {},
+                readOnly = true,
+                placeholder = { Text(placeholder) },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            onValueChange(option)
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
     }
 }
