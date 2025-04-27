@@ -2,6 +2,7 @@ package com.site7x24learn.internshipfrontend.ui.screens.login
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,12 +31,16 @@ import androidx.navigation.compose.rememberNavController
 import com.site7x24learn.internshipfrontend.ui.theme.AppTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.ImeAction
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import java.io.IOException
  import androidx.compose.material3.TextField
 
 
 
 // OR
 import androidx.compose.material3.TextField // For Material 3 (if you're using Compose Material 3)
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.navigation.NavHostController
@@ -158,40 +163,79 @@ fun LoginScreen(navController: NavHostController) {
             )
 
             // Login button
+            // Login button
+            val context = LocalContext.current
+            val coroutineScope = rememberCoroutineScope()
+
             Button(
                 onClick = {
-                    val loginRequest = LoginRequest(email, password)
-                    RetrofitClient.apiService.login(loginRequest).enqueue(object : Callback<LoginResponse> {
-                        override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    coroutineScope.launch {
+                        try {
+                            val loginRequest = LoginRequest(email, password)
+                            val response = RetrofitClient.getApiService().login(loginRequest)
+
                             if (response.isSuccessful) {
+                                val loginResponse = response.body()
                                 errorMessage = null
-                                Log.d("Login", "Success: ${response.body()?.message}")
-                                // Navigate or do something on success
+                                Log.d("Login", "Success: ${loginResponse?.message}")
+
+                                loginResponse?.let {
+                                    it.token?.let { token ->
+                                        Log.d("Login", "Received Token: $token")
+                                        RetrofitClient.setAuthToken(token, context)
+                                    }
+
+                                    it.user?.role?.let { role ->
+                                        when (role.lowercase()) {
+                                            "admin" -> {
+                                                Toast.makeText(context, "Welcome Admin!", Toast.LENGTH_SHORT).show()
+                                                navController.navigate("admin_dashboard") {
+                                                    popUpTo("login") { inclusive = true }
+                                                }
+                                            }
+                                            "student" -> {
+                                                Toast.makeText(context, "Welcome Student!", Toast.LENGTH_SHORT).show()
+                                                navController.navigate("student_dashboard") {
+                                                    popUpTo("login") { inclusive = true }
+                                                }
+                                            }
+                                            else -> {
+                                                errorMessage = "Unknown role: $role"
+                                                Toast.makeText(context, "Unknown role!", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    } ?: run {
+                                        errorMessage = "User role missing"
+                                        Toast.makeText(context, "User info missing!", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
                             } else {
                                 val errorBody = response.errorBody()?.string()
-                                try {
+                                errorMessage = try {
                                     val jsonObject = org.json.JSONObject(errorBody)
-                                    val msg = jsonObject.optString("error")
-                                    errorMessage = msg.ifBlank { "Login failed" }
+                                    jsonObject.optString("error", "Login failed").takeIf { it.isNotBlank() }
+                                        ?: "Login failed with status ${response.code()}"
                                 } catch (e: Exception) {
-                                    errorMessage = "Unexpected error"
+                                    "Error: ${response.message()}"
                                 }
                                 Log.e("Login", "Failed: $errorBody")
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                             }
+                        } catch (e: Exception) {
+                            errorMessage = when (e) {
+                                is IOException -> "Network error: Please check your connection"
+                                else -> "Error: ${e.localizedMessage}"
+                            }
+                            Log.e("Login", "Network failure: ${e.message}")
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                         }
-
-                        override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                            errorMessage = "Network error: ${t.localizedMessage}"
-                            Log.e("Login", "Network failure: ${t.message}")
-                        }
-                    })
-
-                }, Modifier
+                    }
+                },
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
-
             ) {
                 Text(
                     text = "Login",
@@ -199,7 +243,6 @@ fun LoginScreen(navController: NavHostController) {
                     fontSize = 20.sp
                 )
             }
-
             // Don't have an account? Sign Up
             Row(
                 modifier = Modifier.fillMaxWidth(),
