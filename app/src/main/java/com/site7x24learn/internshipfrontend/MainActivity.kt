@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.site7x24learn.internshipfrontend.data.network.RetrofitClient
 import com.site7x24learn.internshipfrontend.ui.screens.login.LoginScreen
 import com.site7x24learn.internshipfrontend.ui.screens.login.SignUpScreen
 import com.site7x24learn.internshipfrontend.ui.screens.navigation.AppNavGraph
@@ -21,6 +22,7 @@ import com.site7x24learn.internshipfrontend.ui.theme.InternshipFrontendTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        RetrofitClient.initialize(applicationContext)
         enableEdgeToEdge()
         setContent {
             val navController= rememberNavController()

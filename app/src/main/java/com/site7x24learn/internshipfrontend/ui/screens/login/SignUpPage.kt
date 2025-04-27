@@ -30,6 +30,9 @@ import java.sql.Date
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import java.io.IOException
 
 @Composable
 fun SignUpScreen(navController:NavHostController) {
@@ -43,6 +46,7 @@ fun SignUpScreen(navController:NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
 
 
 
@@ -117,70 +121,61 @@ fun SignUpScreen(navController:NavHostController) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
-                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        dateFormat.isLenient = false
 
-                        try {
-                            dateFormat.parse(dob) // Validate date format
+                        coroutineScope.launch {
+                            try {
+                                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                dateFormat.isLenient = false
+                                dateFormat.parse(dob) // Validate date format
 
-                            val signupRequest = SignupRequest(
-                                name, gender, dob, phone, address, email, password, confirmPassword
-                            )
+                                val signupRequest = SignupRequest(
+                                    name, gender, dob, phone, address, email, password, confirmPassword
+                                )
 
-                            RetrofitClient.apiService.signup(signupRequest).enqueue(object : Callback<SignupResponse> {
-                                override fun onResponse(call: Call<SignupResponse>, response: Response<SignupResponse>) {
-                                    val responseBody = response.body()
+                                val response = try {
+                                    RetrofitClient.getApiService().signup(signupRequest)
+                                } catch (e: IOException) {
+                                    signupErrorMessage = "Network error: Please check your connection"
+                                    return@launch
+                                } catch (e: Exception) {
+                                    signupErrorMessage = "Unexpected error occurred"
+                                    return@launch
+                                }
+
+                                if (response.isSuccessful) {
+                                    signupErrorMessage = null
+                                    navController.navigate("login") {
+                                        popUpTo("signup") { inclusive = true }
+                                    }
+                                } else {
                                     val errorBody = response.errorBody()?.string()
-
-                                    Log.d("Signup", "Raw response: ${response.raw()}")
-                                    Log.d("Signup", "Response body: $responseBody")
-                                    Log.d("Signup", "Error body: $errorBody")
-
-                                    if (response.isSuccessful && responseBody != null) {
-                                        signupErrorMessage = null
-                                        // Navigate to login or show success
-                                        navController.navigate("login") {
-                                            popUpTo("signup") { inclusive = true }
-                                        }
-                                    } else {
-                                        try {
-                                            val json = JSONObject(errorBody)
-                                            signupErrorMessage = when {
-                                                json.has("errors") -> {
-                                                    val errors = json.getJSONArray("errors")
-                                                    val messages = mutableListOf<String>()
-                                                    for (i in 0 until errors.length()) {
-                                                        messages.add(errors.getJSONObject(i).getString("msg"))
-                                                    }
-                                                    messages.joinToString("\n")
+                                    signupErrorMessage = try {
+                                        val json = JSONObject(errorBody)
+                                        when {
+                                            json.has("errors") -> {
+                                                val errors = json.getJSONArray("errors")
+                                                (0 until errors.length()).joinToString("\n") { i ->
+                                                    errors.getJSONObject(i).getString("msg")
                                                 }
-                                                json.has("message") -> json.getString("message") // e.g., "User already exists"
-                                                else -> "Something went wrong."
                                             }
-                                        } catch (e: Exception) {
-                                            signupErrorMessage = "Unexpected error occurred."
-                                            Log.e("Signup", "JSON parse error: ${e.message}")
+                                            json.has("message") -> json.getString("message")
+                                            else -> "Registration failed (${response.code()})"
                                         }
+                                    } catch (e: Exception) {
+                                        "Failed to parse error response"
                                     }
                                 }
-
-                                override fun onFailure(call: Call<SignupResponse>, t: Throwable) {
-                                    Log.e("Signup", "Network failure: ${t.message}")
-                                    signupErrorMessage = "Network error: ${t.message}"
-                                }
-                            })
-
-                        } catch (e: ParseException) {
-                            signupErrorMessage = "Invalid date format! Use YYYY-MM-DD"
+                            } catch (e: ParseException) {
+                                signupErrorMessage = "Invalid date format! Use YYYY-MM-DD"
+                            }
                         }
-                    }
-                    ,
+                    },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3),
-                         )
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
                 ) {
                     Text("Sign up", fontSize = 20.sp, color = Color.White)
                 }
+
             }
         }
     }

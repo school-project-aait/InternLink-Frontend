@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.site7x24learn.internshipfrontend.ui.screens.admin.AdminDashboardScreen
 import com.site7x24learn.internshipfrontend.ui.screens.login.LoginScreen
 import com.site7x24learn.internshipfrontend.ui.screens.login.SignUpScreen
+import com.site7x24learn.internshipfrontend.ui.screens.student.StudentDashboardScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -15,6 +17,12 @@ fun AppNavGraph(navController: NavHostController) {
         }
         composable("login") {
             LoginScreen(navController)
+        }
+        composable("admin_dashboard"){
+            AdminDashboardScreen(navController)
+        }
+        composable("student_dashboard"){
+            StudentDashboardScreen(navController)
         }
     }
 }
