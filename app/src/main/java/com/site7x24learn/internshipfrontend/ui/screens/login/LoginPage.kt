@@ -37,7 +37,6 @@ import java.io.IOException
  import androidx.compose.material3.TextField
 
 
-
 // OR
 import androidx.compose.material3.TextField // For Material 3 (if you're using Compose Material 3)
 import androidx.compose.ui.platform.LocalContext
@@ -189,7 +188,7 @@ fun LoginScreen(navController: NavHostController) {
                                         when (role.lowercase()) {
                                             "admin" -> {
                                                 Toast.makeText(context, "Welcome Admin!", Toast.LENGTH_SHORT).show()
-                                                navController.navigate("admin_dashboard") {
+                                                navController.navigate("add_internship") {
                                                     popUpTo("login") { inclusive = true }
                                                 }
                                             }
@@ -266,7 +265,6 @@ fun LoginScreen(navController: NavHostController) {
             }
         }
     }
-
 
 }
 

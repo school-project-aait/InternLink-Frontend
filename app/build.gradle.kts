@@ -74,6 +74,8 @@ dependencies {
     // For older Android versions, also add:
     implementation ("androidx.security:security-identity-credential:1.0.0-alpha03")
 
+    implementation ("com.squareup.okhttp3:okhttp:4.9.0")
+
 
 
 
