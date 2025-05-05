@@ -3,32 +3,51 @@ package com.site7x24learn.internshipfrontend
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.site7x24learn.internshipfrontend.data.network.RetrofitClient
-import com.site7x24learn.internshipfrontend.ui.screens.login.LoginScreen
-import com.site7x24learn.internshipfrontend.ui.screens.login.SignUpScreen
-import com.site7x24learn.internshipfrontend.ui.screens.navigation.AppNavGraph
-import com.site7x24learn.internshipfrontend.ui.theme.AppTheme
-import com.site7x24learn.internshipfrontend.ui.theme.InternshipFrontendTheme
+import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
+import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
+import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
+import com.site7x24learn.internshipfrontend.presentation.theme.InternshipFrontendTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        RetrofitClient.initialize(applicationContext)
-        enableEdgeToEdge()
         setContent {
-            val navController= rememberNavController()
-            AppNavGraph(navController)
-
+            InternshipFrontendTheme {
+                AuthApp()
+            }
         }
+    }
+}
+
+@Composable
+fun AuthApp() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = Routes.SIGN_UP
+    ) {
+        composable(Routes.SIGN_UP) {
+            SignUpScreen(navController = navController)
+        }
+        composable(Routes.LOGIN) {
+            LoginScreen(navController = navController)
+        }
+        composable(Routes.ADMIN_DASHBOARD) {
+            AddInternships(navController = navController) // Admin screen
+        }
+        composable(Routes.STUDENT_DASHBOARD) {
+            // Define a composable for student dashboard, if any
+        }
+
     }
 }
 //
