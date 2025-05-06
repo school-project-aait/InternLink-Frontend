@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
+//import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
+
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
 import com.site7x24learn.internshipfrontend.presentation.theme.InternshipFrontendTheme
@@ -41,9 +43,13 @@ fun AuthApp() {
         composable(Routes.LOGIN) {
             LoginScreen(navController = navController)
         }
-        composable(Routes.ADMIN_DASHBOARD) {
+//        composable(Routes.ADMIN_DASHBOARD){
+//            AdminDashboard(navController=navController)
+//        }
+        composable(Routes.ADD_INTERNSHIP) {
             AddInternships(navController = navController) // Admin screen
         }
+
         composable(Routes.STUDENT_DASHBOARD) {
             // Define a composable for student dashboard, if any
         }

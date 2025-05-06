@@ -4,8 +4,10 @@ package com.site7x24learn.internshipfrontend.data.datasources.remote
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.CreateInternshipRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.LoginRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateInternshipRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.AuthResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.DropdownDataResponseDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipResponseDto
 
 import retrofit2.Response
@@ -33,9 +35,31 @@ interface ApiService {
     suspend fun createInternship(
         @Body request: CreateInternshipRequestDto
     ): Response<InternshipResponseDto>
+    @GET("api/internships")
+    suspend fun getInternships(): Response<InternshipListResponseDto>
 
+    @GET("api/internships/{id}")
+    suspend fun getInternshipById(@Path("id") id: Int): Response<InternshipResponseDto>
+    @PUT("api/internships/{id}")
+    suspend fun updateInternship(
+        @Path("id") id: Int,
+        @Body request: UpdateInternshipRequestDto
+    ): Response<BaseResponseDto>
 
+    @DELETE("api/internships/{id}")
+    suspend fun deleteInternship(@Path("id") id: Int): Response<BaseResponseDto>
+
+    @POST("api/internships/{id}/review")
+    suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
 }
+
+data class BaseResponseDto(
+    val success: Boolean,
+    val message: String?
+)
+
+
+
 
 
 

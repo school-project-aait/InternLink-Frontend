@@ -13,5 +13,20 @@ interface InternshipRepository {
         companyName: String,
         categoryId: Int
     ): Resource<Internship>
+    suspend fun getInternships(): Resource<List<Internship>>
+    suspend fun getInternshipById(id: Int): Resource<Internship>
+    suspend fun updateInternship(
+        id: Int,
+        title: String?,
+        description: String?,
+        deadline: String?,
+        companyName: String?,
+        categoryId: Int?
+    ): Resource<Boolean>
+
+    suspend fun deleteInternship(id: Int): Resource<Boolean>
+//    suspend fun reviewApplications(internshipId: Int): Resource<Boolean>
+
+
 }
 

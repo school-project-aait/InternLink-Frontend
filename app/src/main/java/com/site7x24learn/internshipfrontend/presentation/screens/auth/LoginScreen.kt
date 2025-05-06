@@ -1,5 +1,6 @@
 package com.site7x24learn.internshipfrontend.presentation.screens.auth
 
+
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,7 +23,6 @@ import com.site7x24learn.internshipfrontend.presentation.theme.InternshipFronten
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.AuthViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.Route
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -33,42 +33,57 @@ fun LoginScreen(navController: NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    // Debugging
+    LaunchedEffect(Unit) {
+        println("DEBUG: LoginScreen composable initialized")
+    }
+
     LaunchedEffect(authState) {
+        println("DEBUG: AuthState changed: $authState")
+
         when (authState) {
             is AuthViewModel.AuthState.Success -> {
                 val user = (authState as AuthViewModel.AuthState.Success).user
+                println("DEBUG: Login successful - User role: ${user.role}")
 
                 withContext(Dispatchers.Main) {
-
-                    when (user.role?.trim()?.lowercase()) {
+                    when (user.role) {
                         "admin" -> {
-                            navController.navigate(Routes.ADMIN_DASHBOARD) {
+                            println("DEBUG: Navigating to admin dashboard")
+                            Toast.makeText(context, "Welcome Admin!", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Routes.ADD_INTERNSHIP) {
                                 popUpTo(Routes.LOGIN) { inclusive = true }
                             }
-                            Toast.makeText(context, "Welcome Admin!", Toast.LENGTH_SHORT).show()
                         }
                         "student" -> {
+                            println("DEBUG: Navigating to student dashboard")
+                            Toast.makeText(context, "Welcome Student!", Toast.LENGTH_SHORT).show()
                             navController.navigate(Routes.STUDENT_DASHBOARD) {
                                 popUpTo(Routes.LOGIN) { inclusive = true }
                             }
-                            Toast.makeText(context, "Welcome Student!", Toast.LENGTH_SHORT).show()
                         }
                         else -> {
-                            Toast.makeText(context, "Unknown role: ${user.role}", Toast.LENGTH_LONG).show()
+                            println("DEBUG: Unknown role: ${user.role}")
+                            Toast.makeText(
+                                context,
+                                "Unknown role: ${user.role}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
             }
             is AuthViewModel.AuthState.Error -> {
+                val errorMessage = (authState as AuthViewModel.AuthState.Error).message
+                println("DEBUG: Login error: $errorMessage")
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        (authState as AuthViewModel.AuthState.Error).message,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
-            else -> {} // Ignore Loading/Idle states
+            is AuthViewModel.AuthState.Loading -> {
+                println("DEBUG: Login in progress...")
+            }
+            else -> {}
         }
     }
 
@@ -84,6 +99,7 @@ fun LoginScreen(navController: NavHostController) {
                     .paddingFromBaseline(top = 120.dp, bottom = 90.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Logo and title
                 Row {
                     Text("Intern", fontSize = 40.sp, color = Color(0xFF1B2A80))
                     Text("Link", fontSize = 40.sp, color = Color(0xFF2196F3))
@@ -96,6 +112,7 @@ fun LoginScreen(navController: NavHostController) {
                     modifier = Modifier.padding(bottom = 26.dp)
                 )
 
+                // Error message display
                 if (authState is AuthViewModel.AuthState.Error) {
                     Text(
                         text = (authState as AuthViewModel.AuthState.Error).message,
@@ -105,6 +122,7 @@ fun LoginScreen(navController: NavHostController) {
                     )
                 }
 
+                // Email field
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -119,6 +137,7 @@ fun LoginScreen(navController: NavHostController) {
                     )
                 )
 
+                // Password field
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
@@ -134,6 +153,7 @@ fun LoginScreen(navController: NavHostController) {
                         .padding(bottom = 16.dp)
                 )
 
+                // Forgot password
                 Text(
                     text = "Forgot password?",
                     color = MaterialTheme.colorScheme.primary,
@@ -141,11 +161,15 @@ fun LoginScreen(navController: NavHostController) {
                     modifier = Modifier
                         .align(Alignment.End)
                         .padding(bottom = 16.dp)
-                        .clickable { /* Handle forgot password */ }
+                        .clickable { /* TODO: Handle forgot password */ }
                 )
 
+                // Login button
                 Button(
-                    onClick = { viewModel.login(email, password) },
+                    onClick = {
+                        println("DEBUG: Login button clicked")
+                        viewModel.login(email, password)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
@@ -159,6 +183,7 @@ fun LoginScreen(navController: NavHostController) {
                     }
                 }
 
+                // Sign up prompt
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
@@ -170,7 +195,9 @@ fun LoginScreen(navController: NavHostController) {
                         text = "Sign Up",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 18.sp,
-                        modifier = Modifier.clickable { navController.navigate(Routes.SIGN_UP) }
+                        modifier = Modifier.clickable {
+                            navController.navigate(Routes.SIGN_UP)
+                        }
                     )
                 }
             }

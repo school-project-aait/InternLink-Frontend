@@ -1,5 +1,6 @@
 package com.site7x24learn.internshipfrontend.data.repositories
 
+
 import com.site7x24learn.internshipfrontend.data.datasources.local.PreferencesManager
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.LoginRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
@@ -11,6 +12,7 @@ import com.site7x24learn.internshipfrontend.domain.models.auth.SignUpRequest
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import retrofit2.Response
 import javax.inject.Inject
+import java.lang.Exception
 
 class AuthRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
@@ -22,48 +24,47 @@ class AuthRepositoryImpl @Inject constructor(
             val response = apiService.login(request.toDto())
             handleLoginResponse(response)
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(Exception("Network error: ${e.message}"))
         }
     }
 
     override suspend fun signUp(request: SignUpRequest): Result<AuthUser> {
         return try {
             val response = apiService.signUp(request.toDto())
-
-            if (response.isSuccessful) {
-                // Create minimal AuthUser since backend doesn't return full user data
-                Result.success(
-                    AuthUser(
-                        email = request.email,
-                        name = request.name,
-                        // Add other minimal required fields
-                        role = "student" // Default role
-                    )
-                )
-            } else {
-                val errorBody = response.errorBody()?.string()
-                Result.failure(Exception(errorBody ?: "Registration failed"))
-            }
+            handleSignUpResponse(response, request)
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(Exception("Network error: ${e.message}"))
         }
     }
 
     private fun handleLoginResponse(response: Response<AuthResponseDto>): Result<AuthUser> {
         return if (response.isSuccessful) {
             response.body()?.let { dto ->
-                if (dto.success && dto.user != null && dto.token != null) {
-                    val authUser = dto.toDomain()
+                if (dto.user != null && dto.token != null) {
+                    // Normalize role and create AuthUser
+                    val authUser = AuthUser(
+                        id = dto.user.id,
+                        name = dto.user.name ?: "",
+                        email = dto.user.email,
+                        gender = dto.user.gender ?: "",
+                        birthDate = dto.user.birthDate ?: "",
+                        phone = dto.user.phone ?: "",
+                        address = dto.user.address ?: "",
+                        role = dto.user.role?.trim()?.lowercase() ?: "student",
+                        token = dto.token
+                    )
+
+                    // Save token and return user
                     preferencesManager.saveAuthToken(authUser.token)
+                    println("DEBUG: Login successful - Role: ${authUser.role}")
                     Result.success(authUser)
                 } else {
-                    Result.failure(Exception(dto.message ?: "Authentication failed"))
+                    Result.failure(Exception("User data missing in response"))
                 }
             } ?: Result.failure(Exception("Empty response body"))
         } else {
-            // Improved error handling
             val errorBody = response.errorBody()?.string() ?: "Unknown error"
-            Result.failure(Exception("HTTP ${response.code()}: $errorBody"))
+            Result.failure(Exception("Login failed: ${response.code()} - $errorBody"))
         }
     }
 
@@ -73,29 +74,22 @@ class AuthRepositoryImpl @Inject constructor(
     ): Result<AuthUser> {
         return if (response.isSuccessful) {
             response.body()?.let { dto ->
-                if (dto.success) {
-                    // Create minimal AuthUser from request data
-                    val authUser = AuthUser(
-                        name = request.name,
-                        email = request.email,
-                        gender = request.gender,
-                        birthDate = request.dob,
-                        phone = request.phone,
-                        address = request.address,
-                        role = dto.user?.role ?: "student", // Use role from response if available
-                        token = dto.token ?: "" // Include token if available
-                    )
-                    // Save token if present
-                    dto.token?.let { token -> preferencesManager.saveAuthToken(token) }
-                    Result.success(authUser)
-                } else {
-                    Result.failure(Exception(dto.message ?: "Registration failed"))
-                }
-            } ?: Result.failure(Exception("Empty response body"))
+                val authUser = AuthUser(
+                    name = request.name,
+                    email = request.email,
+                    gender = request.gender,
+                    birthDate = request.dob,
+                    phone = request.phone,
+                    address = request.address,
+                    role = dto.user?.role?.trim()?.lowercase() ?: "student",
+                    token = dto.token ?: ""
+                )
+                dto.token?.let { token -> preferencesManager.saveAuthToken(token) }
+                Result.success(authUser)
+            } ?: Result.failure(Exception("Registration successful but no user data returned"))
         } else {
-            // Parse error message from response body if available
-            val errorBody = response.errorBody()?.string() ?: response.message()
-            Result.failure(Exception("HTTP ${response.code()}: $errorBody"))
+            val errorBody = response.errorBody()?.string() ?: "Unknown error"
+            Result.failure(Exception("Registration failed: ${response.code()} - $errorBody"))
         }
     }
 
@@ -103,7 +97,7 @@ class AuthRepositoryImpl @Inject constructor(
         preferencesManager.clearToken()
     }
 
-    // Updated extension functions for model conversion
+    // Extension functions for DTO conversion
     private fun LoginRequest.toDto() = LoginRequestDto(
         email = email,
         password = password
@@ -113,22 +107,10 @@ class AuthRepositoryImpl @Inject constructor(
         name = name,
         email = email,
         password = password,
-        confirmPassword = password, // Assuming confirmPassword is same as password after validation
+        confirmPassword = password,
         gender = gender,
         birthDate = dob,
         phone = phone,
         address = address
-    )
-
-    private fun AuthResponseDto.toDomain() = AuthUser(
-        id = user?.id ?: -1,
-        name = user?.name ?: "",
-        email = user?.email ?: "",
-        gender = user?.gender ?: "",
-        birthDate = user?.birthDate ?: "",
-        phone = user?.phone ?: "",
-        address = user?.address ?: "",
-        role = user?.role ?: "student",
-        token = token ?: ""
     )
 }
