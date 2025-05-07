@@ -9,4 +9,5 @@ object Routes {
     const val LANDING="landing"
     const val WAITING="waiting"
     const val INTERNSHIP_LIST="internship_list"
+    const val CREATE_APPLICATION="create_application"
 }
