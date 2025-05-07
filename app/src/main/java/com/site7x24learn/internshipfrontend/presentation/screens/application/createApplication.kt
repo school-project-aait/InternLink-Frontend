@@ -1,6 +1,7 @@
 package com.site7x24learn.internshipfrontend.presentation.screens.application
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -33,7 +35,7 @@ import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.ApplicationViewModel
 
 @Composable
-fun CreateApplicationScreen(appviewModel: ApplicationViewModel = viewModel(),
+fun CreateApplicationScreen(appviewModel: ApplicationViewModel = hiltViewModel(),
                             navController: NavHostController,) {
     Column(
         modifier = Modifier
@@ -55,7 +57,8 @@ fun CreateApplicationScreen(appviewModel: ApplicationViewModel = viewModel(),
                 .fillMaxWidth()
                 .padding(top = 50.dp, bottom = 40.dp, start = 10.dp, end = 10.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(16.dp)
+                                      .background(Color(0xF4EDEDED).copy(alpha = 0.23f))) {
                 Text(
                     text = "Personal Information",
                     modifier = Modifier
