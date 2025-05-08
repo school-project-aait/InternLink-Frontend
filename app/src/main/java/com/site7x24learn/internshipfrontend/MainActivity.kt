@@ -72,6 +72,21 @@ fun AuthApp() {
                 onBack = { navController.popBackStack() }
             )
         }
+        // Add this composable to your NavHost setup
+// Add this composable to your NavHost setup
+        composable(
+            route = Routes.EDIT_INTERNSHIP,
+            arguments = listOf(
+                navArgument("internshipId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val internshipId = backStackEntry.arguments?.getInt("internshipId")
+            AddInternships(
+                navController = navController,
+                internshipId = internshipId,
+                viewModel = hiltViewModel()
+            )
+        }
 
 
 //        composable(Routes.STUDENT_DASHBOARD) {

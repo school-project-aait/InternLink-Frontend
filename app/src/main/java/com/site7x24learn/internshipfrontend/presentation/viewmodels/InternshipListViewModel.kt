@@ -1,10 +1,5 @@
 package com.site7x24learn.internshipfrontend.presentation.viewmodels
 
-
-
-
-
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.site7x24learn.internshipfrontend.domain.models.internships.Internship
