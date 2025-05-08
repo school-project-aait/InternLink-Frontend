@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.runtime.State
+import java.util.Collections.emptyList
 
 @HiltViewModel
 class InternshipViewModel @Inject constructor(

@@ -4,6 +4,11 @@ object Routes {
     const val LOGIN = "login"
     const val SIGN_UP = "signup"
     const val ADD_INTERNSHIP = "add_internship"
+    const val EDIT_INTERNSHIP="edit_internship/{internshipId}"
     const val ADMIN_DASHBOARD = "admin_dashboard"
-    const val STUDENT_DASHBOARD = "student_dashboard"
+//    const val STUDENT_DASHBOARD = "student_dashboard"
+    const val APPLY_INTERNSHIP = "apply_internship/{internshipId}"
+    const val INTERNSHIP_LIST="internship_list"
+
+    fun editInternshipRoute(internshipId:Int)="edit_internship/$internshipId"
 }
