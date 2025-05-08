@@ -7,6 +7,7 @@ import com.site7x24learn.internshipfrontend.data.repositories.InternshipReposito
 
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
+import com.site7x24learn.internshipfrontend.domain.repositories.UserRepository
 
 import dagger.Module
 import dagger.Provides
@@ -33,6 +34,13 @@ object RepositoryModule {
     ): InternshipRepository {
         return InternshipRepositoryImpl(apiService)
     }
-
+    @Provides
+    @Singleton
+    fun provideProfileRepository(
+        apiService: ApiService,
+        preferencesManager: PreferencesManager
+    ): UserRepository {
+        return UserRepositoryImpl(apiService)
+    }
 
 }

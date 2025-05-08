@@ -14,6 +14,7 @@ import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddIntern
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.profile.ProfileScreen
 import com.site7x24learn.internshipfrontend.presentation.theme.InternshipFrontendTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -53,6 +54,11 @@ fun AuthApp() {
         composable(Routes.STUDENT_DASHBOARD) {
             // Define a composable for student dashboard, if any
         }
+
+        composable(Routes.PROFILE) {
+            ProfileScreen(navController)
+        }
+
 
     }
 }

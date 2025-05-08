@@ -6,4 +6,5 @@ object Routes {
     const val ADD_INTERNSHIP = "add_internship"
     const val ADMIN_DASHBOARD = "admin_dashboard"
     const val STUDENT_DASHBOARD = "student_dashboard"
+    const val PROFILE = "profile"
 }

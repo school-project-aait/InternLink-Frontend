@@ -5,10 +5,13 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.request.Crea
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.LoginRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateInternshipRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateProfileRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.AuthResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.DropdownDataResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipResponseDto
+
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.UserDto
 
 import retrofit2.Response
 import retrofit2.http.Body
@@ -51,6 +54,18 @@ interface ApiService {
 
     @POST("api/internships/{id}/review")
     suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
+
+    @GET("api/users/profile")
+    suspend fun getProfile(): Response<UserDto>
+
+    @PUT("api/users/{id}")
+    suspend fun updateProfile(
+        @Path("id") id: Int,
+        @Body request: UpdateProfileRequestDto
+    ): Response<BaseResponseDto>
+
+    @DELETE("api/users/{id}")
+    suspend fun deleteProfile(@Path("id") id: Int): Response<BaseResponseDto>
 }
 
 data class BaseResponseDto(

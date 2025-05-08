@@ -1,8 +1,5 @@
 package com.site7x24learn.internshipfrontend.presentation.components
 
-
-
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
