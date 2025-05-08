@@ -5,15 +5,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
+//import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
+import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
 //import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.student.ApplyInternshipScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentInternshipListScreen
 import com.site7x24learn.internshipfrontend.presentation.theme.InternshipFrontendTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,16 +49,50 @@ fun AuthApp() {
         composable(Routes.LOGIN) {
             LoginScreen(navController = navController)
         }
-//        composable(Routes.ADMIN_DASHBOARD){
-//            AdminDashboard(navController=navController)
-//        }
+        composable(Routes.ADMIN_DASHBOARD){
+            AdminDashboard(navController=navController)
+        }
+        composable(Routes.INTERNSHIP_LIST){
+            StudentInternshipListScreen(navController=navController)
+        }
         composable(Routes.ADD_INTERNSHIP) {
             AddInternships(navController = navController) // Admin screen
         }
-
-        composable(Routes.STUDENT_DASHBOARD) {
-            // Define a composable for student dashboard, if any
+        composable(
+            route = Routes.APPLY_INTERNSHIP,
+            arguments = listOf(
+                navArgument("internshipId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val internshipId = backStackEntry.arguments?.getInt("internshipId")
+            ApplyInternshipScreen(
+                internshipId = internshipId,
+                onBack = { navController.popBackStack() }
+            )
         }
+
+
+//        composable(Routes.STUDENT_DASHBOARD) {
+//            // Define a composable for student dashboard, if any
+//        }
+//        composable(
+//            route = Routes.EDIT_INTERNSHIP,
+//            arguments = listOf(
+//                navArgument("internshipId") { type = NavType.IntType }
+//            )
+//        ) { backStackEntry ->
+//            AddInternships(
+//                navController = navController,
+//                internshipId = backStackEntry.arguments?.getInt("internshipId")
+//            )
+//        }
+
+        // Student Screens
+//        composable(Routes.STUDENT_DASHBOARD) {
+//            StudentDashboard(navController = navController)
+//        }
 
     }
 }

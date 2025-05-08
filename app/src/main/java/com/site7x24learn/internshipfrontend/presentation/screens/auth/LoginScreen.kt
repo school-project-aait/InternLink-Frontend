@@ -51,14 +51,14 @@ fun LoginScreen(navController: NavHostController) {
                         "admin" -> {
                             println("DEBUG: Navigating to admin dashboard")
                             Toast.makeText(context, "Welcome Admin!", Toast.LENGTH_SHORT).show()
-                            navController.navigate(Routes.ADD_INTERNSHIP) {
+                            navController.navigate(Routes.ADMIN_DASHBOARD) {
                                 popUpTo(Routes.LOGIN) { inclusive = true }
                             }
                         }
                         "student" -> {
                             println("DEBUG: Navigating to student dashboard")
                             Toast.makeText(context, "Welcome Student!", Toast.LENGTH_SHORT).show()
-                            navController.navigate(Routes.STUDENT_DASHBOARD) {
+                            navController.navigate(Routes.INTERNSHIP_LIST) {
                                 popUpTo(Routes.LOGIN) { inclusive = true }
                             }
                         }

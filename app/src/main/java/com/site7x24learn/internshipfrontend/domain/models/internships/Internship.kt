@@ -10,5 +10,5 @@ data class Internship(
     val createdByName: String,
     val createdAt: String,
     val status: String,
-    val isActive: Boolean
+    val isActive: Int
 )
