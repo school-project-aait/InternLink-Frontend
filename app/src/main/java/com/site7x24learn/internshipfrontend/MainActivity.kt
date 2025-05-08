@@ -18,12 +18,12 @@ import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDash
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
-<<<<<<< HEAD
+
 import com.site7x24learn.internshipfrontend.presentation.screens.profile.ProfileScreen
-=======
+
 import com.site7x24learn.internshipfrontend.presentation.screens.student.ApplyInternshipScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentInternshipListScreen
->>>>>>> origin/main
+
 import com.site7x24learn.internshipfrontend.presentation.theme.InternshipFrontendTheme
 import dagger.hilt.android.AndroidEntryPoint
 

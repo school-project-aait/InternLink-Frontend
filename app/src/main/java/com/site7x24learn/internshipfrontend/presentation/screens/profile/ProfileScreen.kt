@@ -1,5 +1,6 @@
 package com.site7x24learn.internshipfrontend.presentation.screens.profile
 
+import CategoryDropdown
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.site7x24learn.internshipfrontend.domain.models.internships.Category
 import com.site7x24learn.internshipfrontend.domain.models.user.UserProfile
-import com.site7x24learn.internshipfrontend.presentation.components.CategoryDropdown
+
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.ProfileViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

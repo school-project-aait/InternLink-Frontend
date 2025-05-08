@@ -5,6 +5,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.request.Upda
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.UserDto
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
 import com.site7x24learn.internshipfrontend.data.datasources.remote.BaseResponseDto
+import com.site7x24learn.internshipfrontend.domain.models.user.UserProfile
 
 
 import com.site7x24learn.internshipfrontend.domain.repositories.UserRepository
@@ -24,7 +25,7 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateProfile(profile: UserDto): BaseResponseDto {
+    override suspend fun updateProfile(profile: UserProfile): BaseResponseDto {
         val request = UpdateProfileRequestDto(
             name = profile.name.toString(),
             email = profile.email,
