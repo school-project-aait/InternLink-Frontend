@@ -4,6 +4,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.local.PreferencesMa
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
 import com.site7x24learn.internshipfrontend.data.repositories.AuthRepositoryImpl
 import com.site7x24learn.internshipfrontend.data.repositories.InternshipRepositoryImpl
+import com.site7x24learn.internshipfrontend.data.repositories.UserRepositoryImpl
 
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
@@ -39,8 +40,7 @@ object RepositoryModule {
     fun provideProfileRepository(
         apiService: ApiService,
         preferencesManager: PreferencesManager
-    ): UserRepository {
-        return UserRepositoryImpl(apiService)
-    }
+    ): UserRepository = UserRepositoryImpl(apiService, preferencesManager)
+
 
 }

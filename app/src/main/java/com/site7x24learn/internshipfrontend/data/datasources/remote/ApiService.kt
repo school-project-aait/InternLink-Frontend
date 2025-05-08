@@ -52,6 +52,7 @@ interface ApiService {
     @DELETE("api/internships/{id}")
     suspend fun deleteInternship(@Path("id") id: Int): Response<BaseResponseDto>
 
+
     @POST("api/internships/{id}/review")
     suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
 
@@ -66,6 +67,10 @@ interface ApiService {
 
     @DELETE("api/users/{id}")
     suspend fun deleteProfile(@Path("id") id: Int): Response<BaseResponseDto>
+
+//    @POST("api/internships/{id}/review")
+//    suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
+
 }
 
 data class BaseResponseDto(

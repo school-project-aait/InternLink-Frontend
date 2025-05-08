@@ -1,131 +1,165 @@
 package com.site7x24learn.internshipfrontend.presentation.components
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/main
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.site7x24learn.internshipfrontend.domain.models.internships.Internship
 
 @Composable
 fun InternshipCard(
     internship: Internship,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+    isAdmin: Boolean = true
 ) {
     // Shape definitions
-    val cardShape = RoundedCornerShape(12.dp)
-    val statusShape = RoundedCornerShape(4.dp)
+    val cardShape = RoundedCornerShape(16.dp)
+    val statusShape = RoundedCornerShape(20.dp)
 
-    // Parse requirements from description
-    val requirements = internship.description?.split("\n")
-        ?.filter { it.trim().startsWith("-") || it.trim().startsWith("•") }
-        ?.map { it.trim().removePrefix("-").removePrefix("•").trim() }
-        ?: emptyList()
+    val requirements = internship.description?.split("\n")?.map { it.trim() } ?: emptyList()
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 8.dp),
         shape = cardShape,
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFD6EAF8)
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(20.dp)
         ) {
-            // Title and Category Row
+            // Title Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = internship.title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onClick() }
                 )
 
-                Text(
-                    text = "[${internship.categoryName}]",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
+                if (isAdmin) {
+                    IconButton(
+                        onClick = onEdit,
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Company and Status Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Spacer(modifier = Modifier.height(8.dp))
+            // Category and Company Row
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 5.dp)
             ) {
-                Text(
-                    text = "Company: ${internship.companyName}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-
-                // Status Indicator
+                // Category Chip
                 Box(
                     modifier = Modifier
-                        .clip(statusShape)
-                        .background(
-                            color = when (internship.status.lowercase()) {
-                                "open" -> Color(0xFF4CAF50).copy(alpha = 0.2f)
-                                "closed" -> Color(0xFFF44336).copy(alpha = 0.2f)
-                                else -> Color(0xFF9E9E9E).copy(alpha = 0.2f)
-                            }
+                        .border(
+                            width = 1.dp,
+                            color = Color(0xFF2196F3),
+                            shape = RoundedCornerShape(8.dp)
                         )
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = internship.status.replaceFirstChar { it.uppercase() },
-                        color = when (internship.status.lowercase()) {
-                            "open" -> Color(0xFF2E7D32)
-                            "closed" -> Color(0xFFC62828)
-                            else -> Color(0xFF616161)
-                        },
-                        fontSize = 12.sp
+                        text = internship.categoryName,
+                        color = Color(0xFF2196F3),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                // Company
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = Color.Black, fontWeight = FontWeight.Bold)) {
+                            append("\n Company: ")
+                        }
+                        withStyle(style = SpanStyle(color = Color(0xFF2196F3), fontWeight = FontWeight.Bold)) {
+                            append(internship.companyName)
+                        }
+                    },
+                    modifier = Modifier.padding(vertical = 5.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Requirements Section
             if (requirements.isNotEmpty()) {
                 Text(
-                    text = "Requirements:",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold
+                    text = "Requirements:", // use your model's field directly
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Black,
+                    modifier = Modifier.padding(vertical = 5.dp)
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Column(modifier = Modifier.padding(start = 8.dp)) {
                     requirements.take(3).forEach { req ->
                         Text(
                             text = "• $req",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                             modifier = Modifier.padding(vertical = 2.dp),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
@@ -141,38 +175,54 @@ fun InternshipCard(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Deadline and Active Status Row
+            // Footer with Deadline and Status
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Deadline: ${internship.deadline}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                // Deadline
+                Column {
+                    Text(
+                        text = "Deadline: ${internship.deadline}",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.Black,
+                        modifier = Modifier.padding(vertical = 5.dp)
+                    )
+                }
 
-                // Active Indicator
+                // Status and Active Indicator
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Status Badge
                     Box(
                         modifier = Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
+                            .clip(statusShape)
                             .background(
-                                if (internship.isActive) Color(0xFF4CAF50)
-                                else Color(0xFF9E9E9E)
+                                when (internship.status.lowercase()) {
+                                    "open" -> Color(0xFFE8F5E9)
+                                    "closed" -> Color(0xFFFFEBEE)
+                                    else -> Color(0xFFEEEEEE)
+                                }
                             )
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = if (internship.isActive) "Active" else "Inactive",
-                        style = MaterialTheme.typography.labelSmall
-                    )
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = internship.status.replaceFirstChar { it.uppercase() },
+                            style = MaterialTheme.typography.labelMedium,
+                            color = when (internship.status.lowercase()) {
+                                "open" -> Color(0xFF2E7D32)
+                                "closed" -> Color(0xFFC62828)
+                                else -> Color(0xFF616161)
+                            }
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+

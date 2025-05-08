@@ -9,7 +9,6 @@ data class UserDto(
     @SerializedName("gender") val gender: String?,
     @SerializedName("birth_date") val birthDate: String?,
     @SerializedName("phone") val phone: String?,
-    @SerializedName("address") val address: String?,
-    @SerializedName("role") val role: String?
+    @SerializedName("address") val address: String?
 )
 

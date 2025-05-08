@@ -100,18 +100,18 @@ class InternshipRepositoryImpl(
             if (response.isSuccessful) {
                 response.body()?.let { body ->
                     Resource.Success(
-                        body.data.internships.map { dto ->
+                        body.data.map { dto ->
                             Internship(
-                                id = dto.internship_id,
+                                id = dto.internship_id,  // Make sure this matches DTO
                                 title = dto.title,
                                 description = dto.description ?: "",
                                 deadline = dto.deadline,
-                                companyName = dto.company_name,
-                                categoryName = dto.category_name,
-                                createdByName = dto.created_by_name,
-                                createdAt = dto.created_at,
+                                companyName = dto.company_name,  // Note underscore
+                                categoryName = dto.category_name,  // Note underscore
+                                createdByName = dto.created_by_name,  // Note underscore
+                                createdAt = dto.created_at,  // Note underscore
                                 status = dto.status,
-                                isActive = dto.is_active
+                                isActive = dto.is_active  // Note underscore
                             )
                         }
                     )
@@ -125,7 +125,6 @@ class InternshipRepositoryImpl(
             Resource.Error("Network error: ${e.message}")
         }
     }
-
     override suspend fun getInternshipById(id: Int): Resource<Internship> {
         return try {
             val response = apiService.getInternshipById(id)
