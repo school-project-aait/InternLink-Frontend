@@ -79,13 +79,13 @@ interface ApiService {
 //    @POST("api/internships/{id}/review")
 //    suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
 
-    @POST("api/profile")
+    @POST("api/student/{id}/profile")
     suspend fun saveProfile(
         @Body request: StudentProfileRequestDto
     ): Response<StudentProfileResponseDto>
 
-    @DELETE("api/profile")
-    suspend fun deleteProfile(): Response<StudentProfileResponseDto>
+    @DELETE("api/student/profile")
+    suspend fun deleteProfile(@Path("id") id: Int): Response<StudentProfileResponseDto>
 }
 
 data class BaseResponseDto(
