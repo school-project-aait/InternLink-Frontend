@@ -24,11 +24,16 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun AddInternships(
+    internshipId: Int? = null,
     navController: NavHostController,
     viewModel: InternshipViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
-
+    LaunchedEffect(Unit) {
+        if (internshipId != null) {
+            viewModel.loadInternship(internshipId)
+        }
+    }
     LaunchedEffect(state.isSuccess) {
         if (state.isSuccess) {
             delay(1500) // Show success message for 1.5 seconds
@@ -124,8 +129,16 @@ fun AddInternships(
                     )
                 }
 
+
                 FormButtons(
-                    onSave = { viewModel.onEvent(InternshipEvent.Submit) },
+                    onSave = {
+                        if (internshipId != null) {
+                            viewModel.onEvent(InternshipEvent.Update(internshipId))
+                        } else {
+                            viewModel.onEvent(InternshipEvent.Submit)
+                        }
+                    },
+//                    onSave = { viewModel.onEvent(InternshipEvent.Submit) },
                     onCancel = {
                         viewModel.onEvent(InternshipEvent.Reset)
                         navController.navigate(Routes.ADMIN_DASHBOARD) {

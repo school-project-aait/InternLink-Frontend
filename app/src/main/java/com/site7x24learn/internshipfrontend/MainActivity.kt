@@ -14,6 +14,7 @@ import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
 //import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
 import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
+import com.site7x24learn.internshipfrontend.presentation.screens.admin.StudentStatusReminderScreen
 //import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
@@ -88,6 +89,24 @@ fun AuthApp() {
                     }
                 }
             )
+        }
+        // Add this composable to your NavHost setup
+// Add this composable to your NavHost setup
+        composable(
+            route = Routes.EDIT_INTERNSHIP,
+            arguments = listOf(
+                navArgument("internshipId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val internshipId = backStackEntry.arguments?.getInt("internshipId")
+            AddInternships(
+                navController = navController,
+                internshipId = internshipId,
+                viewModel = hiltViewModel()
+            )
+        }
+        composable(Routes.STUDENT_STATUS){
+            StudentStatusReminderScreen(navController=navController)
         }
 
 
