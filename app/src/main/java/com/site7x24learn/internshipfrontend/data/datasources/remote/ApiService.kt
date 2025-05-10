@@ -7,6 +7,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.request.Crea
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.LoginRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateInternshipRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateProfileRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationListResponse
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationResponse
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.AuthResponseDto
@@ -14,7 +15,9 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.response.Cre
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.DropdownDataResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipResponseDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.ProfileDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.SingleApplicationResponse
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.UserDto
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
@@ -105,6 +108,20 @@ suspend fun createApplication(
         @Path("id") applicationId: Int,
         @Query("status") status: String
     )
+    @POST("api/internships/{id}/review")
+    suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
+    // In ApiService, ensure all endpoints are consistent:
+    @GET("api/users/profile")
+    suspend fun getProfile(): Response<ProfileDto>
+
+    @PUT("api/users/{id}")
+    suspend fun updateProfile(
+        @Path("id") id: Int,
+        @Body request: UpdateProfileRequestDto
+    ): Response<UserDto>
+
+    @DELETE("api/users/{id}")
+    suspend fun deleteProfile(@Path("id") id: Int)
 
 //    @POST("api/internships/{id}/review")
 //    suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>

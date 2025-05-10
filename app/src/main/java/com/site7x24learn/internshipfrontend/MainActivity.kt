@@ -18,6 +18,7 @@ import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDash
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.profile.ProfileScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.ApplyInternshipScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentDashboardScreen
 
@@ -90,6 +91,9 @@ fun AuthApp() {
 
         composable(Routes.STUDENT_DASHBOARD) {
             StudentDashboardScreen(navController = navController)
+        }
+        composable(Routes.PROFILE) {
+            ProfileScreen(navController = navController)
         }
 
 //        composable(Routes.STUDENT_APPLICATIONS) {

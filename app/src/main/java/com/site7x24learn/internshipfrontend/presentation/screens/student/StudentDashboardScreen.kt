@@ -158,7 +158,7 @@ private fun ApplicationsList(
                     val updates = buildMap<String, Any> {
                         put("university", application.university)
                         put("degree", application.degree)
-                        put("graduation_year", application.graduationYear)
+                        put("graduation_year", application.graduationYear.toString().toInt())
                         application.linkdIn?.let { put("linkdIn", it) } // Only include if not null
                     }
 
