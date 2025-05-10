@@ -20,8 +20,12 @@ import com.site7x24learn.internshipfrontend.presentation.screens.admin.StudentSt
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.ApplyInternshipScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentDashboardScreen
+
+
 import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentInternshipListScreen
 import com.site7x24learn.internshipfrontend.presentation.theme.InternshipFrontendTheme
+import com.site7x24learn.internshipfrontend.presentation.viewmodels.StudentDashboardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -62,15 +66,28 @@ fun AuthApp() {
         composable(
             route = Routes.APPLY_INTERNSHIP,
             arguments = listOf(
-                navArgument("internshipId") {
+                navArgument("internshipId") { type = NavType.IntType },
+                navArgument("applicationId") {
                     type = NavType.IntType
+                    defaultValue = -1
                 }
             )
         ) { backStackEntry ->
             val internshipId = backStackEntry.arguments?.getInt("internshipId")
+            val applicationId = backStackEntry.arguments?.getInt("applicationId") ?: -1
+            val dashboardViewModel: StudentDashboardViewModel = hiltViewModel()
+
             ApplyInternshipScreen(
                 internshipId = internshipId,
-                onBack = { navController.popBackStack() }
+                applicationId = applicationId,
+                onBack = { navController.popBackStack() },  // Handle back navigation
+                onSuccess = {
+                    // Handle successful submission/update
+                    dashboardViewModel.refreshApplications()
+                    navController.navigate(Routes.STUDENT_DASHBOARD) {
+                        popUpTo(Routes.STUDENT_DASHBOARD) { inclusive = true }
+                    }
+                }
             )
         }
         // Add this composable to your NavHost setup
@@ -91,6 +108,54 @@ fun AuthApp() {
         composable(Routes.STUDENT_STATUS){
             StudentStatusReminderScreen(navController=navController)
         }
+
+
+
+
+//        composable(
+//            route = Routes.APPLY_INTERNSHIP,
+//            arguments = listOf(
+//                navArgument("internshipId") { type = NavType.IntType }
+//            )
+//        ) { backStackEntry ->
+//            val internshipId = backStackEntry.arguments?.getInt("internshipId")
+//            val dashboardViewModel: StudentDashboardViewModel = hiltViewModel()
+//
+//            ApplyInternshipScreen(
+//                internshipId = internshipId,
+//                onBack = { navController.popBackStack() },
+//                onSuccess = {
+//                    // Force refresh before navigation
+//                    dashboardViewModel.refreshApplications()
+//
+//                    // Navigate with clean back stack
+//                    navController.navigate(Routes.STUDENT_DASHBOARD) {
+//                        popUpTo(Routes.STUDENT_DASHBOARD) { inclusive = true }
+//                        launchSingleTop = true
+//                    }
+//                }
+//            )
+//        }
+
+
+        composable(Routes.STUDENT_DASHBOARD) {
+            StudentDashboardScreen(navController = navController)
+        }
+
+//        composable(Routes.STUDENT_APPLICATIONS) {
+//            StudentApplicationsScreen(navController = navController)
+//        }
+//        composable(Routes.STUDENT_DASHBOARD){
+//            StudentDashboardScreen(navController = navController)
+//        }
+//        composable(Routes.STUDENT_DASHBOARD) {
+//            StudentDashboardScreen(
+//                onBack = { navController.popBackStack() },
+//                onNavigateToUpdate = { applicationId ->
+//                    navController.navigate(Routes.UPDATE_APPLICATION.replace("{applicationId}", applicationId.toString()))
+//                }
+//            )
+//        }
 
 
 //        composable(Routes.STUDENT_DASHBOARD) {
