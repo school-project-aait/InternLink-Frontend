@@ -158,18 +158,28 @@ private fun ApplicationsList(
                     val updates = buildMap<String, Any> {
                         put("university", application.university)
                         put("degree", application.degree)
-                        put("graduation_year", application.graduationYear)
+                        put("graduationYear", application.graduationYear)
                         application.linkdIn?.let { put("linkdIn", it) } // Only include if not null
                     }
 
                     viewModel.updateApplication(application.id, updates) {
                         navController.navigate(
-                            "${Routes.APPLY_INTERNSHIP}/${application.internshipId}"
+                            Routes.APPLY_INTERNSHIP
+                                .replace("{internshipId}", application.internshipId.toString())
+                                .plus("?applicationId=${application.id}")
                         ) {
                             launchSingleTop = true
-                            // Preserve back stack while ensuring fresh data
                             restoreState = true
                         }
+
+//                        navController.navigate(
+//                            Routes.APPLY_INTERNSHIP
+//                            .replace(
+//                                "{internshipId}",application.internshipId.toString())
+//                                .plus("?applicationId=${application.id}")
+////                                application.internshipId.toString()
+//                            )
+//                            "${Routes.APPLY_INTERNSHIP}/${application.internshipId}"
                     }
                 }
             )

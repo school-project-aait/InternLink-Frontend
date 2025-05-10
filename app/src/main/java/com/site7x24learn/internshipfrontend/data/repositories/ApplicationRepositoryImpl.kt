@@ -164,17 +164,33 @@ class ApplicationRepositoryImpl @Inject constructor(
             Resource.Error("Couldn't reach server. Check your internet connection")
         }
     }
-
+    // In ApplicationRepositoryImpl
     override suspend fun checkExistingApplication(internshipId: Int): Resource<Boolean> {
         return try {
-            val exists = apiService.checkExistingApplication(internshipId)
-            Resource.Success(exists)
-        } catch (e: HttpException) {
-            Resource.Error(e.message ?: "An error occurred")
-        } catch (e: IOException) {
-            Resource.Error("Couldn't reach server. Check your internet connection")
+            // Get ALL user applications
+            val result = getUserApplications()
+            if (result is Resource.Success) {
+                // 🚨 Check if any application exists for this internship
+                val exists = result.data?.any { it.internshipId == internshipId } ?: false
+                Resource.Success(exists)
+            } else {
+                Resource.Error("Failed to check existing applications")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Check failed: ${e.message}")
         }
     }
+
+//    override suspend fun checkExistingApplication(internshipId: Int): Resource<Boolean> {
+//        return try {
+//            val exists = apiService.checkExistingApplication(internshipId)
+//            Resource.Success(exists)
+//        } catch (e: HttpException) {
+//            Resource.Error(e.message ?: "An error occurred")
+//        } catch (e: IOException) {
+//            Resource.Error("Couldn't reach server. Check your internet connection")
+//        }
+//    }
 
     override suspend fun updateApplicationStatus(
         applicationId: Int,

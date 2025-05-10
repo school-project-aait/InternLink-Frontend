@@ -10,8 +10,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.site7x24learn.internshipfrontend.domain.models.application.ApplicationRequest
+import com.site7x24learn.internshipfrontend.domain.repositories.ApplicationRepository
 import com.site7x24learn.internshipfrontend.domain.usecases.application.CheckExistingApplicationUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.application.CreateApplicationUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.UpdateApplicationUseCase
 import com.site7x24learn.internshipfrontend.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,9 +21,46 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApplyInternshipViewModel @Inject constructor(
+    // 🚨 Add repository to load existing application
+    private val repository: ApplicationRepository,
+    private val updateApplicationUseCase: UpdateApplicationUseCase,
     private val createApplicationUseCase: CreateApplicationUseCase,
     private val checkExistingApplicationUseCase: CheckExistingApplicationUseCase
 ) : ViewModel() {
+
+    // 🚨 Track edit mode state
+    var isEditMode by mutableStateOf(false)
+        private set
+
+    // 🚨 Add method to load existing application
+    fun loadExistingApplication(applicationId: Int) {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            when (val result = repository.getApplicationById(applicationId)) {
+                is Resource.Success -> {
+                    result.data?.let { app ->
+                        state = state.copy(
+                            university = app.university,
+                            degree = app.degree,
+                            graduationYear = app.graduationYear.toString(),
+                            linkedIn = app.linkdIn ?: ""
+                        )
+                        isEditMode = true
+                    }
+                    uiState = uiState.copy(isLoading = false)
+                }
+
+                is Resource.Error -> {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        error = result.message ?: "Failed to load application"
+                    )
+                }
+
+                Resource.Loading -> Unit
+            }
+        }
+    }
 
     var state by mutableStateOf(ApplyInternshipState())
         private set
@@ -57,30 +96,56 @@ class ApplyInternshipViewModel @Inject constructor(
             }
         }
     }
-
+    // 🚨 Modified submit method
     private fun submitApplication(internshipId: Int) {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true)
 
-            val alreadyApplied = checkExistingApplicationUseCase(internshipId)
-            if (alreadyApplied is Resource.Success && alreadyApplied.data) {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    error = "You've already applied to this internship",
-                    isApplicationSubmitted = false
-                )
-                return@launch
+            // Skip existing check only if we're editing AND keeping same internship
+            if (!isEditMode) {
+                val alreadyApplied = checkExistingApplicationUseCase(internshipId)
+                if (alreadyApplied is Resource.Success && alreadyApplied.data) {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        error = "You've already applied to this internship",
+                        isApplicationSubmitted = false
+                    )
+                    return@launch
+                }
             }
 
-            val validationErrors = validateFields()
-            if (validationErrors.isNotEmpty()) {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    fieldErrors = validationErrors,
-                    isApplicationSubmitted = false
-                )
-                return@launch
+            // 🚨 Split create/update logic
+            if (isEditMode) {
+                handleUpdateApplication(internshipId)
+            } else {
+                handleCreateApplication(internshipId)
             }
+
+
+
+//    private fun submitApplication(internshipId: Int) {
+//        viewModelScope.launch {
+//            uiState = uiState.copy(isLoading = true)
+//
+//            val alreadyApplied = checkExistingApplicationUseCase(internshipId)
+//            if (alreadyApplied is Resource.Success && alreadyApplied.data) {
+//                uiState = uiState.copy(
+//                    isLoading = false,
+//                    error = "You've already applied to this internship",
+//                    isApplicationSubmitted = false
+//                )
+//                return@launch
+//            }
+
+//            val validationErrors = validateFields()
+//            if (validationErrors.isNotEmpty()) {
+//                uiState = uiState.copy(
+//                    isLoading = false,
+//                    fieldErrors = validationErrors,
+//                    isApplicationSubmitted = false
+//                )
+//                return@launch
+//            }
 
             val resumeBytes = applicationContext?.let { context ->
                 state.resumeUri?.let { uri ->
@@ -164,6 +229,82 @@ class ApplyInternshipViewModel @Inject constructor(
 
         return errors
     }
+    private suspend fun handleCreateApplication(internshipId: Int) {
+        val resumeBytes = applicationContext?.let { context ->
+            state.resumeUri?.let { uri ->
+                context.contentResolver.openInputStream(uri)?.use { stream ->
+                    stream.readBytes()
+                }
+            }
+        } ?: run {
+            uiState = uiState.copy(
+                isLoading = false,
+                error = "Resume is required",
+                isApplicationSubmitted = false
+            )
+            return
+        }
+
+        val applicationRequest = ApplicationRequest(
+            internshipId = internshipId,
+            university = state.university,
+            degree = state.degree,
+            graduationYear = state.graduationYear.toIntOrNull() ?: 0,
+            linkdIn = state.linkedIn
+        )
+
+        when (val result = createApplicationUseCase(
+            applicationRequest,
+            resumeBytes,
+            state.resumeFileName ?: "resume.pdf"
+        )) {
+            is Resource.Success -> {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    isApplicationSubmitted = true,
+                    error = null,
+                    fieldErrors = emptyMap()
+                )
+            }
+            is Resource.Error -> {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    error = result.message,
+                    isApplicationSubmitted = false
+                )
+            }
+            Resource.Loading -> Unit
+        }
+    }
+
+    private suspend fun handleUpdateApplication(internshipId: Int) {
+        val updates = mapOf(
+            "university" to state.university,
+            "degree" to state.degree,
+            "graduationYear" to state.graduationYear.toInt(),
+            "linkdIn" to state.linkedIn
+        )
+
+        when (val result = updateApplicationUseCase(internshipId, updates)) {
+            is Resource.Success -> {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    isApplicationSubmitted = true,
+                    error = null,
+                    fieldErrors = emptyMap()
+                )
+            }
+            is Resource.Error -> {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    error = result.message,
+                    isApplicationSubmitted = false
+                )
+            }
+            Resource.Loading -> Unit
+        }
+    }
+
 }
 
 // State and Event classes

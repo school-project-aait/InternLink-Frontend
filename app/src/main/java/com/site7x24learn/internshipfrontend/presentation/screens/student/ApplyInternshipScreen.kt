@@ -35,6 +35,7 @@ import com.site7x24learn.internshipfrontend.presentation.viewmodels.StudentDashb
 
 @Composable
 fun ApplyInternshipScreen(
+    applicationId: Int = -1,
     internshipId: Int?,
     onBack: () -> Unit,
     onSuccess:()->Unit,
@@ -42,6 +43,11 @@ fun ApplyInternshipScreen(
     viewModel: ApplyInternshipViewModel = hiltViewModel(),
     dashboardViewModel: StudentDashboardViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(applicationId) {
+        if (applicationId > 0) {
+            viewModel.loadExistingApplication(applicationId)
+        }
+    }
     val state = viewModel.state
     val uiState = viewModel.uiState
     val context = LocalContext.current
@@ -254,7 +260,9 @@ fun ApplyInternshipScreen(
 
         // Submit Button
         RoundedBorderButtonForApplication (
-            buttonText = if (uiState.isLoading) "Submitting..." else "Submit Application",
+            buttonText = if (viewModel.isEditMode) "Update Application"
+            else "Submit Application",
+//            buttonText = if (uiState.isLoading) "Submitting..." else "Submit Application",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
