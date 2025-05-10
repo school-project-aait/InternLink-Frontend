@@ -6,11 +6,13 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.request.Logi
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateInternshipRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateStatusRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.request.StudentProfileRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationsResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.AuthResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.DropdownDataResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipResponseDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.StudentProfileResponseDto
 
 import retrofit2.Response
 import retrofit2.http.Body
@@ -76,6 +78,14 @@ interface ApiService {
 
 //    @POST("api/internships/{id}/review")
 //    suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
+
+    @POST("api/profile")
+    suspend fun saveProfile(
+        @Body request: StudentProfileRequestDto
+    ): Response<StudentProfileResponseDto>
+
+    @DELETE("api/profile")
+    suspend fun deleteProfile(): Response<StudentProfileResponseDto>
 }
 
 data class BaseResponseDto(
