@@ -5,6 +5,8 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.request.Crea
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.LoginRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateInternshipRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateStatusRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationsResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.AuthResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.DropdownDataResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
@@ -14,6 +16,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -48,6 +51,28 @@ interface ApiService {
 
     @DELETE("api/internships/{id}")
     suspend fun deleteInternship(@Path("id") id: Int): Response<BaseResponseDto>
+
+//    @PATCH("api/applications/{id}/status")
+//    suspend fun updateApplicationStatus(
+//        @Path("id") id: Int,
+//        @Body request: UpdateStatusRequestDto
+//    ): Response<BaseResponseDto>
+
+    @GET("api/applications")
+    suspend fun getApplications(): Response<ApplicationsResponseDto>
+
+    @PATCH("api/applications/{id}/status")
+    suspend fun updateApplicationStatus(
+        @Path("id") id: Int,
+        @Body request: UpdateStatusRequestDto
+    ): Response<BaseResponseDto>
+
+//    @GET("api/applications")
+//    suspend fun getStudentApplications(): Response<List<StudentStatusResponseDto>>
+//
+//    @GET("api/applications")
+//    suspend fun getStudents(): StudentStatusResponseDto
+
 
 //    @POST("api/internships/{id}/review")
 //    suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>

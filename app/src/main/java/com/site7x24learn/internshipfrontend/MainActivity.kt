@@ -14,6 +14,7 @@ import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
 //import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
 import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
+import com.site7x24learn.internshipfrontend.presentation.screens.admin.StudentStatusReminderScreen
 //import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
@@ -86,6 +87,9 @@ fun AuthApp() {
                 internshipId = internshipId,
                 viewModel = hiltViewModel()
             )
+        }
+        composable(Routes.STUDENT_STATUS){
+            StudentStatusReminderScreen(navController=navController)
         }
 
 

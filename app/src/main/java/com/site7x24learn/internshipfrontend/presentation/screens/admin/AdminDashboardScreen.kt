@@ -79,8 +79,8 @@ fun AdminDashboard(
 
                     Spacer(modifier = Modifier.width(16.dp))
                     Box(Modifier.height(36.dp)){
-                        RoundedBorderButton("Review Application",
-                        ) {}
+                        RoundedBorderButton("Review Application"
+                        ) {navController.navigate(Routes.STUDENT_STATUS)}
                     }
                 }
                 HorizontalDivider()

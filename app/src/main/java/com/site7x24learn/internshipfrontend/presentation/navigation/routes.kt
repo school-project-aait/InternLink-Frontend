@@ -15,4 +15,5 @@ object Routes {
     const val EDIT_INTERNSHIP = "edit_internship/{internshipId}"
 
     fun editInternshipRoute(internshipId: Int) = "edit_internship/$internshipId"
+    const val STUDENT_STATUS="student_status"
 }

@@ -2,6 +2,7 @@ package com.site7x24learn.internshipfrontend.di
 
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
+import com.site7x24learn.internshipfrontend.domain.repositories.StudentStatusRepository
 
 import com.site7x24learn.internshipfrontend.domain.usecases.auth.LoginUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.auth.SignUpUseCase
@@ -11,6 +12,7 @@ import com.site7x24learn.internshipfrontend.domain.usecases.internships.GetCateg
 import com.site7x24learn.internshipfrontend.domain.usecases.internships.GetInternshipByIdUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.internships.GetInternshipsUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.internships.UpdateInternshipUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.student.UpdateStudentStatusUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -63,6 +65,11 @@ object UseCaseModule {
     fun provideDeleteInternshipUseCase(repository: InternshipRepository): DeleteInternshipUseCase {
         return DeleteInternshipUseCase(repository)
     }
+    @Provides
+    fun provideUpdateStudentStatusUseCase(repository: StudentStatusRepository): UpdateStudentStatusUseCase {
+        return UpdateStudentStatusUseCase(repository)
+    }
+
 
 
 
