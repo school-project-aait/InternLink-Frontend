@@ -4,9 +4,13 @@ import com.site7x24learn.internshipfrontend.data.datasources.local.PreferencesMa
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
 import com.site7x24learn.internshipfrontend.data.repositories.AuthRepositoryImpl
 import com.site7x24learn.internshipfrontend.data.repositories.InternshipRepositoryImpl
+import com.site7x24learn.internshipfrontend.data.repositories.StudentStatusRepositoryImpl
 
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
+import com.site7x24learn.internshipfrontend.domain.repositories.StudentStatusRepository
+import com.site7x24learn.internshipfrontend.domain.usecases.student.GetStudentsUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.student.UpdateStudentStatusUseCase
 
 import dagger.Module
 import dagger.Provides
@@ -32,6 +36,14 @@ object RepositoryModule {
         apiService: ApiService
     ): InternshipRepository {
         return InternshipRepositoryImpl(apiService)
+    }
+    @Provides
+    fun provideStudentStatusRepository(api: ApiService): StudentStatusRepository {
+        return StudentStatusRepositoryImpl(api)
+    }
+    @Provides
+    fun provideGetStudentsUseCase(repository: StudentStatusRepository): GetStudentsUseCase {
+        return GetStudentsUseCase(repository)
     }
 
 
