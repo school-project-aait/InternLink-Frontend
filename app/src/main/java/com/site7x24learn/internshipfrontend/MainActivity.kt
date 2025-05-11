@@ -14,11 +14,11 @@ import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
 //import com.site7x24learn.internshipfrontend.presentation.screens.admin.AddInternships
 import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
-import com.site7x24learn.internshipfrontend.presentation.screens.admin.StudentStatusReminderScreen
 //import com.site7x24learn.internshipfrontend.presentation.screens.admin.AdminDashboard
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.profile.ProfileScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.ApplyInternshipScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentDashboardScreen
 
@@ -66,47 +66,34 @@ fun AuthApp() {
         composable(
             route = Routes.APPLY_INTERNSHIP,
             arguments = listOf(
-                navArgument("internshipId") { type = NavType.IntType },
-                navArgument("applicationId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                }
-            )
-        ) { backStackEntry ->
-            val internshipId = backStackEntry.arguments?.getInt("internshipId")
-            val applicationId = backStackEntry.arguments?.getInt("applicationId") ?: -1
-            val dashboardViewModel: StudentDashboardViewModel = hiltViewModel()
-
-            ApplyInternshipScreen(
-                internshipId = internshipId,
-                applicationId = applicationId,
-                onBack = { navController.popBackStack() },  // Handle back navigation
-                onSuccess = {
-                    // Handle successful submission/update
-                    dashboardViewModel.refreshApplications()
-                    navController.navigate(Routes.STUDENT_DASHBOARD) {
-                        popUpTo(Routes.STUDENT_DASHBOARD) { inclusive = true }
-                    }
-                }
-            )
-        }
-        // Add this composable to your NavHost setup
-// Add this composable to your NavHost setup
-        composable(
-            route = Routes.EDIT_INTERNSHIP,
-            arguments = listOf(
                 navArgument("internshipId") { type = NavType.IntType }
             )
         ) { backStackEntry ->
             val internshipId = backStackEntry.arguments?.getInt("internshipId")
-            AddInternships(
-                navController = navController,
+            val dashboardViewModel: StudentDashboardViewModel = hiltViewModel()
+
+            ApplyInternshipScreen(
                 internshipId = internshipId,
-                viewModel = hiltViewModel()
+                onBack = { navController.popBackStack() },
+                onSuccess = {
+                    // Force refresh before navigation
+                    dashboardViewModel.refreshApplications()
+
+                    // Navigate with clean back stack
+                    navController.navigate(Routes.STUDENT_DASHBOARD) {
+                        popUpTo(Routes.STUDENT_DASHBOARD) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
-        composable(Routes.STUDENT_STATUS){
-            StudentStatusReminderScreen(navController=navController)
+
+
+        composable(Routes.STUDENT_DASHBOARD) {
+            StudentDashboardScreen(navController = navController)
+        }
+        composable(Routes.PROFILE) {
+            ProfileScreen(navController = navController)
         }
 
 
@@ -177,6 +164,11 @@ fun AuthApp() {
 //        composable(Routes.STUDENT_DASHBOARD) {
 //            StudentDashboard(navController = navController)
 //        }
+
+        composable(Routes.PROFILE) {
+            ProfileScreen(navController)
+        }
+
 
     }
 }

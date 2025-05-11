@@ -12,7 +12,7 @@ fun GenderDropdown(
     selectedGender: String,
     onGenderSelected: (String) -> Unit
 ) {
-    val genderOptions = listOf("Male", "Female", "Other")
+    val genderOptions = listOf("Male", "Female")
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(

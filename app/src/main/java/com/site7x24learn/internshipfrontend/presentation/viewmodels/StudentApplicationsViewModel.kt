@@ -10,14 +10,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.site7x24learn.internshipfrontend.domain.models.application.Application
-import com.site7x24learn.internshipfrontend.domain.models.application.ApplicationStatus
+
 import com.site7x24learn.internshipfrontend.domain.usecases.application.DeleteApplicationUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.application.GetUserApplicationsUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.application.UpdateApplicationUseCase
 import com.site7x24learn.internshipfrontend.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -34,7 +34,7 @@ class StudentApplicationsViewModel @Inject constructor(
         private set
     // Add these properties to your ViewModel
     private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing = _isRefreshing.asStateFlow()
+
 
 //    init {
 //        loadApplications()

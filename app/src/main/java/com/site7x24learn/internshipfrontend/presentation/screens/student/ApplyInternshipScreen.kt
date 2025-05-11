@@ -24,9 +24,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+
 import com.site7x24learn.internshipfrontend.presentation.components.CustomTextField
-//import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButton
+
 import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButtonForApplication
 import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.ApplyInternshipEvent
