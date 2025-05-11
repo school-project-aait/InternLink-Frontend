@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.site7x24learn.internshipfrontend.domain.models.Application.StudentStatus
+import com.site7x24learn.internshipfrontend.domain.models.application.StudentStatus
 
 @Composable
 fun StudentStatusRow(

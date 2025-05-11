@@ -1,6 +1,6 @@
 package com.site7x24learn.internshipfrontend.domain.usecases.student
 
-import com.site7x24learn.internshipfrontend.domain.models.Application.StudentStatus
+import com.site7x24learn.internshipfrontend.domain.models.application.StudentStatus
 import com.site7x24learn.internshipfrontend.domain.repositories.StudentStatusRepository
 import kotlinx.coroutines.flow.Flow
 

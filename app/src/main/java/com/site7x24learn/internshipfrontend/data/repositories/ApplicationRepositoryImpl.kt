@@ -1,8 +1,6 @@
 package com.site7x24learn.internshipfrontend.data.repositories
 
-import com.google.gson.Gson
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.ApplicationUpdateRequest
-import com.site7x24learn.internshipfrontend.data.datasources.models.request.toDto
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
 import com.site7x24learn.internshipfrontend.domain.models.application.Application
 import com.site7x24learn.internshipfrontend.domain.models.application.ApplicationRequest
@@ -10,11 +8,8 @@ import com.site7x24learn.internshipfrontend.domain.models.application.Applicatio
 import com.site7x24learn.internshipfrontend.domain.repositories.ApplicationRepository
 import com.site7x24learn.internshipfrontend.utils.Resource
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import javax.inject.Inject
 import retrofit2.HttpException
 
@@ -164,33 +159,17 @@ class ApplicationRepositoryImpl @Inject constructor(
             Resource.Error("Couldn't reach server. Check your internet connection")
         }
     }
-    // In ApplicationRepositoryImpl
+
     override suspend fun checkExistingApplication(internshipId: Int): Resource<Boolean> {
         return try {
-            // Get ALL user applications
-            val result = getUserApplications()
-            if (result is Resource.Success) {
-                // 🚨 Check if any application exists for this internship
-                val exists = result.data?.any { it.internshipId == internshipId } ?: false
-                Resource.Success(exists)
-            } else {
-                Resource.Error("Failed to check existing applications")
-            }
-        } catch (e: Exception) {
-            Resource.Error("Check failed: ${e.message}")
+            val exists = apiService.checkExistingApplication(internshipId)
+            Resource.Success(exists)
+        } catch (e: HttpException) {
+            Resource.Error(e.message ?: "An error occurred")
+        } catch (e: IOException) {
+            Resource.Error("Couldn't reach server. Check your internet connection")
         }
     }
-
-//    override suspend fun checkExistingApplication(internshipId: Int): Resource<Boolean> {
-//        return try {
-//            val exists = apiService.checkExistingApplication(internshipId)
-//            Resource.Success(exists)
-//        } catch (e: HttpException) {
-//            Resource.Error(e.message ?: "An error occurred")
-//        } catch (e: IOException) {
-//            Resource.Error("Couldn't reach server. Check your internet connection")
-//        }
-//    }
 
     override suspend fun updateApplicationStatus(
         applicationId: Int,

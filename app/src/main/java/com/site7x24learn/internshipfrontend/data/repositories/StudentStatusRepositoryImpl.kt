@@ -4,10 +4,9 @@ package com.site7x24learn.internshipfrontend.data.repositories
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateStatusRequestDto
 import kotlinx.coroutines.flow.flow
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
-import com.site7x24learn.internshipfrontend.domain.models.Application.StudentStatus
+import com.site7x24learn.internshipfrontend.domain.models.application.StudentStatus
 import com.site7x24learn.internshipfrontend.domain.repositories.StudentStatusRepository
 import kotlinx.coroutines.flow.Flow
-import com.site7x24learn.internshipfrontend.utils.Constants
 import com.site7x24learn.internshipfrontend.utils.Constants.BASE_URL
 
 class StudentStatusRepositoryImpl(
@@ -51,7 +50,7 @@ class StudentStatusRepositoryImpl(
         val requestDto = UpdateStatusRequestDto(status)
 
         // Now call the API with the correct type
-        api.updateApplicationStatus(id, requestDto)
+        api.updateApplicationStatus(id, requestDto.toString())
     }
 }
 

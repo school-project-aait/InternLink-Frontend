@@ -1,7 +1,6 @@
 package com.site7x24learn.internshipfrontend.data.datasources.models.response
 
 import com.google.gson.annotations.SerializedName
-import com.site7x24learn.internshipfrontend.domain.models.Application.StudentStatus
 
 data class ApplicationsResponseDto(
     val success: Boolean,

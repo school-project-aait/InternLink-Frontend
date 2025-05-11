@@ -5,8 +5,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.request.Crea
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.LoginRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateInternshipRequestDto
-import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateStatusRequestDto
-import com.site7x24learn.internshipfrontend.data.datasources.models.request.StudentProfileRequestDto
+
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationListResponse
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationsResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.AuthResponseDto
@@ -15,7 +14,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.response.Dro
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.SingleApplicationResponse
-import com.site7x24learn.internshipfrontend.data.datasources.models.response.StudentProfileResponseDto
+
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -81,7 +80,7 @@ interface ApiService {
     @GET("api/applications")
     suspend fun getUserApplications(): Response<ApplicationListResponse>
 
-    @GET("api/applications")
+    @GET("api/applications/only-admins")
     suspend fun getApplications(): Response<ApplicationsResponseDto>
 
     @GET("api/applications/{id}")
@@ -102,17 +101,17 @@ interface ApiService {
     @PATCH("api/applications/{id}/status")
     suspend fun updateApplicationStatus(
         @Path("id") id: Int,
-        @Body request: UpdateStatusRequestDto
+        @Body request: String
     ): Response<BaseResponseDto>
 
-    // Student Endpoints
-    @POST("api/student/{id}/profile")
-    suspend fun saveProfile(
-        @Body request: StudentProfileRequestDto
-    ): Response<StudentProfileResponseDto>
-
-    @DELETE("api/student/profile")
-    suspend fun deleteProfile(@Path("id") id: Int): Response<StudentProfileResponseDto>
+//    // Student Endpoints
+//    @POST("api/student/{id}/profile")
+//    suspend fun saveProfile(
+//        @Body request: StudentProfileRequestDto
+//    ): Response<StudentProfileResponseDto>
+//
+//    @DELETE("api/student/profile")
+//    suspend fun deleteProfile(@Path("id") id: Int): Response<StudentProfileResponseDto>
 }
 
 data class BaseResponseDto(

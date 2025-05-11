@@ -29,7 +29,8 @@ import androidx.navigation.compose.rememberNavController
 import com.site7x24learn.internshipfrontend.domain.models.internships.Internship
 import com.site7x24learn.internshipfrontend.presentation.components.HeaderComponent
 import com.site7x24learn.internshipfrontend.presentation.components.InternshipCard
-import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButton
+//import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButton
+import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButtonForApplication
 import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.InternshipListState
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.InternshipListViewModel
@@ -79,7 +80,7 @@ fun AdminDashboard(
 
                     Spacer(modifier = Modifier.width(16.dp))
                     Box(Modifier.height(36.dp)){
-                        RoundedBorderButton("Review Application"
+                        RoundedBorderButtonForApplication ("Review Application"
                         ) {navController.navigate(Routes.STUDENT_STATUS)}
                     }
                 }
