@@ -19,6 +19,8 @@ import com.site7x24learn.internshipfrontend.presentation.screens.admin.StudentSt
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.common.WaitingPage
+import com.site7x24learn.internshipfrontend.presentation.screens.home.HomePage
 import com.site7x24learn.internshipfrontend.presentation.screens.student.ApplyInternshipScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentDashboardScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentInternshipListScreen
@@ -44,8 +46,15 @@ fun AuthApp() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.SIGN_UP
+        startDestination = Routes.LANDING_PAGE
     ) {
+        composable(Routes.LANDING_PAGE){
+            HomePage(navController=navController)
+        }
+        composable(Routes.WAITING_PAGE){
+            WaitingPage(navController=navController)
+        }
+
         composable(Routes.SIGN_UP) {
             SignUpScreen(navController = navController)
         }

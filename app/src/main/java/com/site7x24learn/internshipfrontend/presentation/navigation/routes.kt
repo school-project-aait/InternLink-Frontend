@@ -17,6 +17,8 @@ object Routes {
     const val EDIT_INTERNSHIP = "edit_internship/{internshipId}"
     // In your route definition:
 //    const val APPLY_INTERNSHIP = "apply_internship/{internshipId}"
+    const val LANDING_PAGE="landing"
+    const val WAITING_PAGE="waiting"
 
 
     fun editInternshipRoute(internshipId: Int) = "edit_internship/$internshipId"
