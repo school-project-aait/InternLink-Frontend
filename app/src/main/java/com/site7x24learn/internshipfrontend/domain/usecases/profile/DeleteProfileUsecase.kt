@@ -6,7 +6,7 @@ import javax.inject.Inject
 class DeleteProfileUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
-    suspend operator fun invoke() {
-        repository.deleteProfile()
+    suspend operator fun invoke(userId: Int) {
+        repository.deleteProfile(userId)
     }
 }
