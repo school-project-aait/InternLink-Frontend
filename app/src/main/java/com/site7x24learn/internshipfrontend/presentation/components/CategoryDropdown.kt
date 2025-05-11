@@ -1,7 +1,6 @@
 
 
-@file:OptIn(ExperimentalMaterial3Api::class)
-
+package com.site7x24learn.internshipfrontend.presentation.components
 
 
 import androidx.compose.foundation.layout.fillMaxWidth

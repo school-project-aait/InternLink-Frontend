@@ -1,7 +1,8 @@
 package com.site7x24learn.internshipfrontend.presentation.screens.profile
 
-import CategoryDropdown
-import android.widget.Toast
+
+
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -17,14 +18,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.site7x24learn.internshipfrontend.domain.models.internships.Category
 import com.site7x24learn.internshipfrontend.domain.models.user.UserProfile
-
+import com.site7x24learn.internshipfrontend.presentation.components.CategoryDropdown
+import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.ProfileViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(navController: NavHostController) {
     val viewModel: ProfileViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
     val context = LocalContext.current
 
     var name by remember { mutableStateOf("") }
@@ -38,21 +42,29 @@ fun ProfileScreen(navController: NavHostController) {
         Category(2, "Female")
     )
 
-    val profile = viewModel.profileState
-    val isLoading = viewModel.isLoading
-    val error = viewModel.error
-
     LaunchedEffect(Unit) {
         viewModel.getProfile()
     }
 
-    LaunchedEffect(profile) {
-        profile?.let {
-            name = it.name
-            phone = it.phone.toString()
-            address = it.address.toString()
-            dob = it.birthDate.toString()
-            selectedGenderId = genderOptions.find { gender -> gender.name == it.gender }?.id
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is ProfileViewModel.ProfileUiState.Success -> {
+                val profile = (uiState as ProfileViewModel.ProfileUiState.Success).profile
+                name = profile.name
+                phone = profile.phone ?: ""
+                address = profile.address ?: ""
+                dob = profile.birthDate ?: ""
+                selectedGenderId = genderOptions.find { it.name == profile.gender }?.id
+            }
+            is ProfileViewModel.ProfileUiState.Deleted -> {
+                // Handle navigation after deletion
+                navController.popBackStack()
+                // Optionally navigate to login screen
+                navController.navigate(Routes.LOGIN) {
+                    popUpTo(Routes.PROFILE) { inclusive = true }
+                }
+            }
+            else -> {}
         }
     }
 
@@ -66,7 +78,11 @@ fun ProfileScreen(navController: NavHostController) {
         Text("Profile", fontSize = 28.sp, modifier = Modifier.padding(bottom = 16.dp))
 
         if (error != null) {
-            Text(text = error, color = MaterialTheme.colorScheme.error)
+            Text(
+                text = error!!,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
         }
 
         OutlinedTextField(
@@ -82,7 +98,10 @@ fun ProfileScreen(navController: NavHostController) {
             onValueChange = { phone = it },
             label = { Text("Phone") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Next),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Next
+            ),
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         )
 
@@ -106,7 +125,8 @@ fun ProfileScreen(navController: NavHostController) {
         CategoryDropdown(
             categories = genderOptions,
             selectedCategoryId = selectedGenderId,
-            onCategorySelected = { selectedGenderId = it }
+            onCategorySelected = { selectedGenderId = it },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -114,35 +134,42 @@ fun ProfileScreen(navController: NavHostController) {
         Button(
             onClick = {
                 val selectedGender = genderOptions.find { it.id == selectedGenderId }?.name ?: ""
-                val updatedProfile = profile?.copy(
+                val updatedProfile = UserProfile(
+                    id = (uiState as? ProfileViewModel.ProfileUiState.Success)?.profile?.id ?: 0,
                     name = name,
+                    email =  "",
+                    gender = selectedGender,
+                    birthDate = dob,
                     phone = phone,
                     address = address,
-                    birthDate = dob,
-                    gender = selectedGender
+                    role = (uiState as? ProfileViewModel.ProfileUiState.Success)?.profile?.role
                 )
-                if (updatedProfile != null) {
-                    viewModel.updateProfile(updatedProfile)
-                    Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
-                }
+                viewModel.updateProfile(updatedProfile)
             },
             enabled = !isLoading,
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
         ) {
-            Text("Update Profile")
+            if (isLoading) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+            } else {
+                Text("Update Profile")
+            }
         }
 
         Button(
-            onClick = {
-                viewModel.deleteProfile()
-                Toast.makeText(context, "Profile deleted", Toast.LENGTH_SHORT).show()
-                // Optionally navigate away
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+            onClick = { viewModel.deleteProfile() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
+            ),
             enabled = !isLoading,
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
         ) {
-            Text("Delete Profile")
+            if (isLoading) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onError)
+            } else {
+                Text("Delete Profile")
+            }
         }
     }
 }

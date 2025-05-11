@@ -1,7 +1,7 @@
-package com.site7x24learn.internshipfrontend.domain.models.Application
+package com.site7x24learn.internshipfrontend.domain.models.application
 
 data class Resume(
-    val id: Int,
+    val resumeId: Int,
     val userId: Int,
     val originalFilename: String,
     val fileExtension: String,
