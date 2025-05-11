@@ -1,8 +1,16 @@
 package com.site7x24learn.internshipfrontend.di
 
+import com.site7x24learn.internshipfrontend.domain.repositories.ApplicationRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.UserRepository
+import com.site7x24learn.internshipfrontend.domain.usecases.application.CheckExistingApplicationUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.CreateApplicationUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.DeleteApplicationUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.GetApplicationByIdUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.GetUserApplicationsUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.UpdateApplicationStatusUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.UpdateApplicationUseCase
 
 import com.site7x24learn.internshipfrontend.domain.usecases.auth.LoginUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.auth.SignUpUseCase
@@ -30,6 +38,7 @@ object UseCaseModule {
 
     @Provides
     fun provideSignUpUseCase(repo: AuthRepository) = SignUpUseCase(repo)
+
     // Internship Use Cases
     @Provides
 
@@ -38,30 +47,56 @@ object UseCaseModule {
     }
 
     @Provides
+
     fun provideCreateInternshipUseCase(repository: InternshipRepository): CreateInternshipUseCase {
         return CreateInternshipUseCase(repository)
     }
 
     @Provides
+
     fun provideGetInternshipsUseCase(repository: InternshipRepository): GetInternshipsUseCase {
         return GetInternshipsUseCase(repository)
     }
 
     @Provides
+
     fun provideGetInternshipByIdUseCase(repository: InternshipRepository): GetInternshipByIdUseCase {
         return GetInternshipByIdUseCase(repository)
     }
 
     @Provides
+
     fun provideUpdateInternshipUseCase(repository: InternshipRepository): UpdateInternshipUseCase {
         return UpdateInternshipUseCase(repository)
     }
 
     @Provides
+
     fun provideDeleteInternshipUseCase(repository: InternshipRepository): DeleteInternshipUseCase {
         return DeleteInternshipUseCase(repository)
     }
-    // Profile Use Cases
+    // UseCaseModule.kt (add to existing)
+    @Provides
+    fun provideCreateApplicationUseCase(repository: ApplicationRepository) = CreateApplicationUseCase(repository)
+
+    @Provides
+    fun provideGetUserApplicationsUseCase(repository: ApplicationRepository) = GetUserApplicationsUseCase(repository)
+
+    @Provides
+    fun provideGetApplicationByIdUseCase(repository: ApplicationRepository) = GetApplicationByIdUseCase(repository)
+
+    @Provides
+    fun provideUpdateApplicationUseCase(repository: ApplicationRepository) = UpdateApplicationUseCase(repository)
+
+    @Provides
+    fun provideDeleteApplicationUseCase(repository: ApplicationRepository) = DeleteApplicationUseCase(repository)
+
+    @Provides
+    fun provideCheckExistingApplicationUseCase(repository: ApplicationRepository) = CheckExistingApplicationUseCase(repository)
+
+    @Provides
+    fun provideUpdateApplicationStatusUseCase(repository: ApplicationRepository) = UpdateApplicationStatusUseCase(repository)
+
     @Provides
     fun provideGetProfileUseCase(repository: UserRepository): GetProfileUseCase {
         return GetProfileUseCase(repository)
@@ -76,5 +111,7 @@ object UseCaseModule {
     fun provideDeleteProfileUseCase(repository: UserRepository): DeleteProfileUseCase {
         return DeleteProfileUseCase(repository)
     }
+
+
 
 }

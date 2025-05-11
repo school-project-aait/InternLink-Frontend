@@ -1,60 +1,63 @@
 package com.site7x24learn.internshipfrontend.data.repositories
 
-import com.site7x24learn.internshipfrontend.data.datasources.local.PreferencesManager
+
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateProfileRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.ProfileDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.UserDto
-import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
-import com.site7x24learn.internshipfrontend.data.datasources.remote.BaseResponseDto
+import com.site7x24learn.internshipfrontend.data.datasources.remote.UserRemoteDataSource
 import com.site7x24learn.internshipfrontend.domain.models.user.UserProfile
-
-
 import com.site7x24learn.internshipfrontend.domain.repositories.UserRepository
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
-    private val apiService: ApiService,
-    private val preferencesManager: PreferencesManager
+    private val remoteDataSource: UserRemoteDataSource
 ) : UserRepository {
 
-    override suspend fun getProfile(): UserDto {
-        val response = apiService.getProfile()
-        if (response.isSuccessful) {
-            return response.body() ?: throw Exception("Empty profile response")
-        } else {
-            throw Exception("Get profile failed: ${response.code()} ${response.message()}")
-        }
+    override suspend fun getProfile(): ProfileDto {
+        return remoteDataSource.getProfile()
     }
 
-    override suspend fun updateProfile(profile: UserProfile): BaseResponseDto {
-        val request = UpdateProfileRequestDto(
-            name = profile.name.toString(),
-            email = profile.email,
-            phone = profile.phone.toString(),
-            address = profile.address.toString(),
-            gender = profile.gender.toString(),
-            birthDate = profile.birthDate.toString(),
-            role = TODO()
+    override suspend fun updateProfile(profile: UserProfile): UserProfile {
+        require(profile.email != null) { "Email cannot be null for updates" }
+        val requestDto = UpdateProfileRequestDto(
+            name = profile.name,
+
+            gender = profile.gender ?: "",
+            birthDate = profile.birthDate ?: "",
+            phone = profile.phone ?: "",
+            address = profile.address ?: "",
+
+            )
+
+        val response = try {
+            remoteDataSource.updateProfile(profile.id, requestDto)
+        } catch (e: Exception) {
+            throw Exception("Network error: ${e.message}")
+        }
+
+        if (!response.isSuccessful) {  // Now this will work
+            val errorBody = response.errorBody()?.string() ?: "No error details"
+            throw Exception("Update failed (${response.code()}): $errorBody")
+        }
+
+        return response.body()?.toUserProfile(profile.role) ?: throw Exception("Empty response")
+    }
+
+    override suspend fun deleteProfile(id: Int) {
+        remoteDataSource.deleteProfile(id)
+    }
+
+    private fun UserDto.toUserProfile(role: String?): UserProfile {
+        return UserProfile(
+            id = this.id,
+            name = this.name ?: "Unknown",
+            email = this.email,
+            gender = this.gender,
+            birthDate = this.birthDate,
+            phone = this.phone,
+            address = this.address,
+            role = role
         )
-
-        val response = apiService.updateProfile(profile.id, request)
-        if (response.isSuccessful) {
-            return response.body() ?: throw Exception("Empty update response")
-        } else {
-            throw Exception("Update profile failed: ${response.code()} ${response.message()}")
-        }
-    }
-
-    override suspend fun deleteProfile() {
-        val id = getUserId()
-        val response = apiService.deleteProfile(id)
-        if (!response.isSuccessful) {
-            throw Exception("Delete profile failed: ${response.code()} ${response.message()}")
-        }
-    }
-
-    private fun getUserId(): Int {
-        return preferencesManager.getUserId()
-            ?: throw Exception("User ID not found in preferences")
     }
 }
 

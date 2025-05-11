@@ -24,7 +24,7 @@ class PreferencesManager @Inject constructor(
     fun clearToken() {
         sharedPrefs.edit().remove("auth_token").apply()
     }
-    fun getUserId(): Int {
-        return sharedPrefs.getInt("user_id", -1)
-    }
+//    fun getUserId(): Int {
+//        return sharedPrefs.getInt("user_id", -1)
+//    }
 }
