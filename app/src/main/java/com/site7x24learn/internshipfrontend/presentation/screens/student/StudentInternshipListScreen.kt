@@ -2,13 +2,19 @@ package com.site7x24learn.internshipfrontend.presentation.screens.student
 
 
 
+
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,93 +22,136 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.site7x24learn.internshipfrontend.presentation.components.HeaderComponent
-import com.site7x24learn.internshipfrontend.presentation.components.InternshipCard
 import com.site7x24learn.internshipfrontend.presentation.components.StudentInternshipCard
 import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.InternshipListViewModel
-// StudentInternshipListScreen.kt
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentInternshipListScreen(
     navController: NavHostController,
     viewModel: InternshipListViewModel = hiltViewModel()
 ) {
-//    val state by viewModel.state.collectAsState().value
-
     val state = viewModel.state.collectAsState().value
+
     LaunchedEffect(Unit) {
         viewModel.loadInternships()
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        HeaderComponent(
-            onLogout = {
-                navController.navigate(Routes.LOGIN) {
-                    // Clear back stack completely
-                    popUpTo(0)
+    Scaffold(
+        topBar = {
+
+            HeaderComponent(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                onLogout = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0)
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ) {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    tonalElevation = 0.dp
+                ) {
+                    NavigationBarItem(
+                        selected = currentRoute == Routes.STUDENT_DASHBOARD,
+                        onClick = { navController.navigate(Routes.STUDENT_DASHBOARD) },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Home,
+                                contentDescription = "Dashboard"
+                            )
+                        },
+                        label = {
+                            Text("Dashboard")
+                        }
+                    )
+
+                    NavigationBarItem(
+                        selected = currentRoute == Routes.STUDENT_PROFILE,
+                        onClick = { navController.navigate(Routes.STUDENT_PROFILE) },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = "Profile"
+                            )
+                        },
+                        label = {
+                            Text("Profile")
+                        }
+                    )
                 }
             }
-        )
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Available Internships",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.Black
+            )
 
-        Text(
-            text = "Available Internships",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color.Black
-        )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        when {
-            state.isLoading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            state.errorMessage != null -> {
-                Text(
-                    text = state.errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-            state.internships.isEmpty() -> {
-                Text(
-                    text = "No internships available",
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-            else -> {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(state.internships) { internship ->
-                        StudentInternshipCard(
-                            internship = internship,
-                            onApplyClick = { internshipId ->
-                                navController.navigate(
-                                    Routes.APPLY_INTERNSHIP.replace("{internshipId}", internshipId.toString())
-                                ) {
-                                    launchSingleTop = true
+            when {
+                state.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                state.errorMessage != null -> {
+                    Text(
+                        text = state.errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
+                state.internships.isEmpty() -> {
+                    Text(
+                        text = "No internships available",
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
+                else -> {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(state.internships) { internship ->
+                            StudentInternshipCard(
+                                internship = internship,
+                                onApplyClick = { internshipId ->
+                                    navController.navigate(
+                                        Routes.APPLY_INTERNSHIP.replace(
+                                            "{internshipId}",
+                                            internshipId.toString()
+                                        )
+                                    ) {
+                                        launchSingleTop = true
+                                    }
                                 }
-                            }
-                        )
-
-//                        StudentInternshipCard(
-//                            internship = internship,
-//                            onApplyClick = { internshipId ->
-//                                navController.navigate(
-//                                    Routes.APPLY_INTERNSHIP.replace("{internshipId}", internshipId.toString()
-//                                ){
-//                                    launchSingleTop = true
-//                                }
-//
-//                            }
-//                        )
+                            )
+                        }
                     }
                 }
             }

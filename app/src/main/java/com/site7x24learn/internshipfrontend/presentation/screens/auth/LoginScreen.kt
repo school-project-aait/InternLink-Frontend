@@ -153,17 +153,6 @@ fun LoginScreen(navController: NavHostController) {
                         .padding(bottom = 16.dp)
                 )
 
-                // Forgot password
-                Text(
-                    text = "Forgot password?",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .padding(bottom = 16.dp)
-                        .clickable { /* TODO: Handle forgot password */ }
-                )
-
                 // Login button
                 Button(
                     onClick = {
@@ -172,7 +161,7 @@ fun LoginScreen(navController: NavHostController) {
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(62.dp)
                         .padding(bottom = 16.dp),
                     enabled = authState !is AuthViewModel.AuthState.Loading
                 ) {

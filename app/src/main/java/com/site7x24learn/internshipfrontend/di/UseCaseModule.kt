@@ -1,8 +1,15 @@
 package com.site7x24learn.internshipfrontend.di
 
+import com.site7x24learn.internshipfrontend.domain.repositories.ApplicationRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.StudentStatusRepository
+import com.site7x24learn.internshipfrontend.domain.usecases.application.CheckExistingApplicationUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.CreateApplicationUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.DeleteApplicationUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.GetApplicationByIdUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.GetUserApplicationsUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.application.UpdateApplicationUseCase
 
 import com.site7x24learn.internshipfrontend.domain.usecases.auth.LoginUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.auth.SignUpUseCase
@@ -69,6 +76,24 @@ object UseCaseModule {
     fun provideUpdateStudentStatusUseCase(repository: StudentStatusRepository): UpdateStudentStatusUseCase {
         return UpdateStudentStatusUseCase(repository)
     }
+    // UseCaseModule.kt (add to existing)
+    @Provides
+    fun provideCreateApplicationUseCase(repository: ApplicationRepository) = CreateApplicationUseCase(repository)
+
+    @Provides
+    fun provideGetUserApplicationsUseCase(repository: ApplicationRepository) = GetUserApplicationsUseCase(repository)
+
+    @Provides
+    fun provideGetApplicationByIdUseCase(repository: ApplicationRepository) = GetApplicationByIdUseCase(repository)
+
+    @Provides
+    fun provideUpdateApplicationUseCase(repository: ApplicationRepository) = UpdateApplicationUseCase(repository)
+
+    @Provides
+    fun provideDeleteApplicationUseCase(repository: ApplicationRepository) = DeleteApplicationUseCase(repository)
+
+    @Provides
+    fun provideCheckExistingApplicationUseCase(repository: ApplicationRepository) = CheckExistingApplicationUseCase(repository)
 
 
 

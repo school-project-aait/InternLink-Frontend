@@ -2,9 +2,11 @@ package com.site7x24learn.internshipfrontend.di
 
 import com.site7x24learn.internshipfrontend.data.datasources.local.PreferencesManager
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
+import com.site7x24learn.internshipfrontend.data.repositories.ApplicationRepositoryImpl
 import com.site7x24learn.internshipfrontend.data.repositories.AuthRepositoryImpl
 import com.site7x24learn.internshipfrontend.data.repositories.InternshipRepositoryImpl
 import com.site7x24learn.internshipfrontend.data.repositories.StudentStatusRepositoryImpl
+import com.site7x24learn.internshipfrontend.domain.repositories.ApplicationRepository
 
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
@@ -44,6 +46,13 @@ object RepositoryModule {
     @Provides
     fun provideGetStudentsUseCase(repository: StudentStatusRepository): GetStudentsUseCase {
         return GetStudentsUseCase(repository)
+    }
+    @Provides
+    @Singleton
+    fun provideApplicationRepository(
+        apiService: ApiService
+    ): ApplicationRepository {
+        return ApplicationRepositoryImpl(apiService)
     }
 
 

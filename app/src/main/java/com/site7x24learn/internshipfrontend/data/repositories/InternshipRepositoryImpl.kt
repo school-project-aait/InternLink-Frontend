@@ -7,7 +7,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.response.Int
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
-import com.site7x24learn.internshipfrontend.data.datasources.remote.BaseResponseDto
+//import com.site7x24learn.internshipfrontend.data.datasources.remote.BaseResponseDto
 import com.site7x24learn.internshipfrontend.domain.models.internships.Category
 import com.site7x24learn.internshipfrontend.domain.models.internships.Internship
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository

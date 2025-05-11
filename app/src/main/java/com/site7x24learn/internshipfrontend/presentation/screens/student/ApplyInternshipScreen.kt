@@ -2,6 +2,10 @@ package com.site7x24learn.internshipfrontend.presentation.screens.student
 
 
 
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,22 +15,70 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.site7x24learn.internshipfrontend.presentation.components.CustomTextField
-import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButton
+//import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButton
+import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButtonForApplication
+import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
+import com.site7x24learn.internshipfrontend.presentation.viewmodels.ApplyInternshipEvent
+import com.site7x24learn.internshipfrontend.presentation.viewmodels.ApplyInternshipViewModel
+import com.site7x24learn.internshipfrontend.presentation.viewmodels.StudentDashboardViewModel
 
 @Composable
 fun ApplyInternshipScreen(
+    applicationId: Int = -1,
     internshipId: Int?,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onSuccess:()->Unit,
+
+    viewModel: ApplyInternshipViewModel = hiltViewModel(),
+    dashboardViewModel: StudentDashboardViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(applicationId) {
+        if (applicationId > 0) {
+            viewModel.loadExistingApplication(applicationId)
+        }
+    }
+    val state = viewModel.state
+    val uiState = viewModel.uiState
+    val context = LocalContext.current
+
+    // File picker launcher
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            val fileName = context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val displayNameIndex = cursor.getColumnIndex("_display_name")
+                    cursor.getString(displayNameIndex)
+                } else null
+            }
+            fileName?.let { name ->
+                viewModel.onEvent(ApplyInternshipEvent.OnResumeSelected(uri, name))
+            }
+        }
+    }
+
+    // Handle successful submission
+    LaunchedEffect(uiState.isApplicationSubmitted) {
+        if (uiState.isApplicationSubmitted) {
+            dashboardViewModel.refreshApplications()
+            onSuccess()
+//            navController.popBackStack()
+//            navController.navigate(Routes.STUDENT_DASHBOARD)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,6 +116,15 @@ fun ApplyInternshipScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
+        // Error message
+        uiState.error?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+        }
+
         // --- Card 1: Personal Information ---
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -85,51 +146,31 @@ fun ApplyInternshipScreen(
                 )
 
                 CustomTextField(
-                    label = "Full Name",
-                    value = "",
-                    onValueChange = {}
+                    label = "University Name",
+                    value = state.university,
+                    onValueChange = { viewModel.onEvent(ApplyInternshipEvent.OnUniversityChange(it)) },
+                    isError = uiState.fieldErrors.containsKey("university"),
+                    errorMessage = uiState.fieldErrors["university"]
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 CustomTextField(
-                    label = "Gender",
-                    value = "",
-                    onValueChange = {}
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                CustomTextField(
-                    label = "Email",
-                    value = "",
-                    keyboardType = KeyboardType.Email,
-                    onValueChange = {}
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                CustomTextField(
-                    label = "Contact Number",
-                    value = "",
-                    keyboardType = KeyboardType.Phone,
-                    onValueChange = {}
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                CustomTextField(
-                    label = "Address",
-                    value = "",
-                    onValueChange = {}
+                    label = "Degree Program",
+                    value = state.degree,
+                    onValueChange = { viewModel.onEvent(ApplyInternshipEvent.OnDegreeChange(it)) },
+                    isError = uiState.fieldErrors.containsKey("degree"),
+                    errorMessage = uiState.fieldErrors["degree"]
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 CustomTextField(
                     label = "LinkedIn Profile",
-                    value = "",
-                    onValueChange = {}
+                    value = state.linkedIn,
+                    onValueChange = { viewModel.onEvent(ApplyInternshipEvent.OnLinkedInChange(it)) },
+                    isError = uiState.fieldErrors.containsKey("linkedIn"),
+                    errorMessage = uiState.fieldErrors["linkedIn"]
                 )
             }
         }
@@ -153,26 +194,12 @@ fun ApplyInternshipScreen(
                 )
 
                 CustomTextField(
-                    label = "University Name",
-                    value = "",
-                    onValueChange = {}
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                CustomTextField(
-                    label = "Degree Program",
-                    value = "",
-                    onValueChange = {}
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                CustomTextField(
                     label = "Expected Graduation Year",
-                    value = "",
+                    value = state.graduationYear,
+                    onValueChange = { viewModel.onEvent(ApplyInternshipEvent.OnGraduationYearChange(it)) },
                     keyboardType = KeyboardType.Number,
-                    onValueChange = {}
+                    isError = uiState.fieldErrors.containsKey("graduationYear"),
+                    errorMessage = uiState.fieldErrors["graduationYear"]
                 )
             }
         }
@@ -204,24 +231,46 @@ fun ApplyInternshipScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                RoundedBorderButton(
+                // Show selected file name if any
+                state.resumeFileName?.let { fileName ->
+                    Text(
+                        text = "Selected: $fileName",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                // Show error if any
+                uiState.fieldErrors["resume"]?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                RoundedBorderButtonForApplication (
                     buttonText = "Upload Resume",
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Handle file upload
+                    filePickerLauncher.launch("application/pdf")
                 }
             }
         }
 
         // Submit Button
-        RoundedBorderButton(
-            buttonText = "Submit Application",
+        RoundedBorderButtonForApplication (
+            buttonText = if (viewModel.isEditMode) "Update Application"
+            else "Submit Application",
+//            buttonText = if (uiState.isLoading) "Submitting..." else "Submit Application",
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 16.dp),
+            enabled = !uiState.isLoading && internshipId != null
         ) {
-            // Handle application submission
-            onBack()
+            internshipId?.let {
+                viewModel.onEvent(ApplyInternshipEvent.SubmitApplication(it, context))
+            }
         }
     }
 }
