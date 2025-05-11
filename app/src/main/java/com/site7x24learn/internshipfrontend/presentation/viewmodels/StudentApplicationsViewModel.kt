@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -141,13 +142,22 @@ class StudentApplicationsViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     fun canUpdate(deadline: String): Boolean {
         return try {
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            val deadlineDate = LocalDate.parse(deadline, formatter)
-            LocalDate.now().isBefore(deadlineDate)
+            val formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME // Match your actual format
+            val deadlineDate = LocalDateTime.parse(deadline, formatter)
+            LocalDateTime.now().isBefore(deadlineDate)
         } catch (e: Exception) {
-            false
+            false // Handle parse errors as expired
         }
     }
+//    fun canUpdate(deadline: String): Boolean {
+//        return try {
+//            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+//            val deadlineDate = LocalDate.parse(deadline, formatter)
+//            LocalDate.now().isBefore(deadlineDate)
+//        } catch (e: Exception) {
+//            false
+//        }
+//    }
 }
 
 data class StudentApplicationsState(

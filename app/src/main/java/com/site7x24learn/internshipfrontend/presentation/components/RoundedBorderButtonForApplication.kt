@@ -36,5 +36,6 @@ fun RoundedBorderButtonForApplication(
             text = buttonText,
             color = if (enabled) Color(0xFF2196F3) else Color(0xFF2196F3).copy(alpha = 0.5f)
         )
+
     }
 }

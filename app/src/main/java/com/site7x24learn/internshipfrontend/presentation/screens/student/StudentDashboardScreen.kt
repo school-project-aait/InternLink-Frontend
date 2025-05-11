@@ -164,10 +164,9 @@ private fun ApplicationsList(
 
                     viewModel.updateApplication(application.id, updates) {
                         navController.navigate(
-                            Routes.APPLY_INTERNSHIP
-                                .replace("{internshipId}", application.internshipId.toString())
-                                .plus("?applicationId=${application.id}")
-                        ) {
+                            Routes.applyInternshipRoute(application.internshipId, application.id)
+                        )
+                        {
                             launchSingleTop = true
                             restoreState = true
                         }

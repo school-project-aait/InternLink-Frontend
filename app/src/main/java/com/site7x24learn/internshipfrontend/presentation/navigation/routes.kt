@@ -7,7 +7,7 @@ object Routes {
 //    const val EDIT_INTERNSHIP="edit_internship/{internshipId}"
     const val ADMIN_DASHBOARD = "admin_dashboard"
 //    const val STUDENT_DASHBOARD = "student_dashboard"
-    const val APPLY_INTERNSHIP = "apply_internship/{internshipId}"
+//    const val APPLY_INTERNSHIP = "apply_internship/{internshipId}"
     const val INTERNSHIP_LIST="internship_list"
     const val STUDENT_APPLICATIONS = "student_applications"
     const val STUDENT_DASHBOARD = "student_dashboard"
@@ -15,7 +15,20 @@ object Routes {
 //    fun editInternshipRoute(internshipId:Int)="edit_internship/$internshipId"
     // ... existing routes
     const val EDIT_INTERNSHIP = "edit_internship/{internshipId}"
+    // In your route definition:
+//    const val APPLY_INTERNSHIP = "apply_internship/{internshipId}"
+
 
     fun editInternshipRoute(internshipId: Int) = "edit_internship/$internshipId"
     const val STUDENT_STATUS="student_status"
+
+    const val APPLY_INTERNSHIP = "apply_internship/{internshipId}?applicationId={applicationId}"
+//    fun applyInternshipRoute(internshipId: Int, applicationId: Int = -1) =
+//        "apply_internship/$internshipId?applicationId=$applicationId"
+    fun applyInternshipRoute(internshipId: Int, applicationId: Int = -1): String {
+        return "apply_internship/$internshipId?applicationId=$applicationId"
+    }
+
+
+
 }
