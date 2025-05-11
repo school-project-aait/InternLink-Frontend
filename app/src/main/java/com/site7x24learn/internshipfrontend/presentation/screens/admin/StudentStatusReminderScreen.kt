@@ -32,7 +32,8 @@ import androidx.navigation.NavOptionsBuilder
 //import com.site7x24learn.internshipfrontend.domain.models.application.StudentStatus
 import com.site7x24learn.internshipfrontend.domain.repositories.StudentStatusRepository
 import com.site7x24learn.internshipfrontend.presentation.components.HeaderComponent
-import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButton
+import com.site7x24learn.internshipfrontend.presentation.components.RoundedBorderButtonForApplication
+
 import com.site7x24learn.internshipfrontend.presentation.components.StudentStatusRow
 import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 //import com.site7x24learn.internshipfrontend.presentation.viewmodels.StudentStatusUiState
@@ -85,7 +86,7 @@ fun StudentStatusReminderScreen(viewModel: StudentStatusViewModel= hiltViewModel
             }
 
         }
-        RoundedBorderButton(
+        RoundedBorderButtonForApplication (
             buttonText = "Back to Dashboard",
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .padding(20.dp)

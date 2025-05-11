@@ -2,13 +2,11 @@ package com.site7x24learn.internshipfrontend.presentation.screens.student
 
 
 
-
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -37,56 +36,27 @@ fun StudentInternshipListScreen(
         viewModel.loadInternships()
     }
 
-    Scaffold(
-        topBar = {
-            HeaderComponent(
-                onLogout = {
-                    navController.navigate(Routes.LOGIN) {
-                        popUpTo(0)
-                    }
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Header Section
+        HeaderComponent(
+            title = "Available Internships",
+            onBack = { navController.popBackStack() },
+            onLogout = {
+                navController.navigate(Routes.LOGIN) {
+                    popUpTo(0)
                 }
-            )
-        },
-        bottomBar = {
-            BottomAppBar(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    NavigationBarItem(
-                        selected = false,
-                        onClick = { navController.navigate(Routes.STUDENT_DASHBOARD) },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Home,
-                                contentDescription = "Dashboard"
-                            )
-                        },
-                        label = {
-                            Text("Dashboard")
-                        }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
+            },
+            buttonText = "Logout"
+        )
+
+        // Main Content Section
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
+                .weight(1f)
+                .padding(horizontal = 16.dp)
         ) {
-            Text(
-                text = "Available Internships",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.Black
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             when {
                 state.isLoading -> {
                     Box(
@@ -133,5 +103,65 @@ fun StudentInternshipListScreen(
                 }
             }
         }
+
+//        // Bottom Navigation Buttons
+//        Column(
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Divider(
+//                color = Color.LightGray,
+//                thickness = 1.dp,
+//                modifier = Modifier.padding(vertical = 32.dp)
+//            )
+//
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 16.dp, vertical = 8.dp),
+//                horizontalArrangement = Arrangement.SpaceEvenly
+//            ) {
+//                // Dashboard Button
+//                Button(
+//                    onClick = { navController.navigate(Routes.STUDENT_DASHBOARD) },
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = Color(0xFF1B2A80)
+//                    ),
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .padding(horizontal = 4.dp)
+//                        .height(48.dp)
+//                ) {
+//                    Text("Dashboard", fontSize = 12.sp)
+//                }
+//
+//                // Home Button
+//                Button(
+//                    onClick = { /* Already on this screen */ },
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = Color(0xFF1B2A80)
+//                    ),
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .padding(horizontal = 4.dp)
+//                        .height(48.dp)
+//                ) {
+//                    Text("Internships", fontSize = 12.sp)
+//                }
+//
+//                // Profile Button
+//                Button(
+//                    onClick = {  },
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = Color(0xFF1B2A80)
+//                    ),
+//                    modifier = Modifier
+//                        .weight(1f)
+//                        .padding(horizontal = 4.dp)
+//                        .height(48.dp)
+//                ) {
+//                    Text("Profile", fontSize = 12.sp)
+//                }
+//            }
+//        }
     }
 }

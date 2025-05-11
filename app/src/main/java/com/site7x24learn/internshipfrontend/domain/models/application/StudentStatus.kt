@@ -1,4 +1,4 @@
-package com.site7x24learn.internshipfrontend.domain.models.Application
+package com.site7x24learn.internshipfrontend.domain.models.application
 
 
 data class StudentStatus(
