@@ -10,6 +10,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.response.Aut
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.DropdownDataResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipResponseDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.ProfileDto
 
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.UserDto
 
@@ -57,16 +58,16 @@ interface ApiService {
     suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
 
     @GET("api/users/profile")
-    suspend fun getProfile(): Response<UserDto>
+    suspend fun getProfile(): Response<ProfileDto>
 
     @PUT("api/users/{id}")
     suspend fun updateProfile(
         @Path("id") id: Int,
         @Body request: UpdateProfileRequestDto
-    ): Response<BaseResponseDto>
+    ): Response<UserDto>
 
     @DELETE("api/users/{id}")
-    suspend fun deleteProfile(@Path("id") id: Int): Response<BaseResponseDto>
+    suspend fun deleteProfile(@Path("id") id: Int)
 
 //    @POST("api/internships/{id}/review")
 //    suspend fun reviewApplications(@Path("id") internshipId: Int): Response<BaseResponseDto>
