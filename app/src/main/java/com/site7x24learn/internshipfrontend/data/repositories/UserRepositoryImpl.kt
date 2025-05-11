@@ -50,7 +50,7 @@ class UserRepositoryImpl @Inject constructor(
     private fun UserDto.toUserProfile(role: String?): UserProfile {
         return UserProfile(
             id = this.id,
-            name = this.name ?: "Unknown",
+            name = this.name?: "Unknown",
             email = this.email,
             gender = this.gender,
             birthDate = this.birthDate,

@@ -52,8 +52,7 @@ fun ApplicationCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 8.dp)
-            )
-            {
+            ) {
                 StatusIndicator(status = application.status)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -133,3 +132,4 @@ fun ApplicationCard(
         }
     }
 }
+
