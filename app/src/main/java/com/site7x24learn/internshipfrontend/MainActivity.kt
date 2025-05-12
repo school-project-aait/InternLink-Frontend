@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             InternshipFrontendTheme {
-                AuthApp()
+                AuthApp() //Launch the main navigation composable
             }
         }
     }
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AuthApp() {
     val navController = rememberNavController()
-
+    //Manage app navigation and routes
     NavHost(
         navController = navController,
         startDestination = Routes.LANDING_PAGE
@@ -79,7 +79,7 @@ fun AuthApp() {
                 navArgument("internshipId") { type = NavType.IntType },
                 navArgument("applicationId") {
                     type = NavType.IntType
-                    defaultValue = -1
+                    defaultValue = -1 // default means it's a new application
                 }
             )
         ) { backStackEntry ->
