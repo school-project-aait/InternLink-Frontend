@@ -104,64 +104,64 @@ fun StudentInternshipListScreen(
             }
         }
 
-//        // Bottom Navigation Buttons
-//        Column(
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Divider(
-//                color = Color.LightGray,
-//                thickness = 1.dp,
-//                modifier = Modifier.padding(vertical = 32.dp)
-//            )
-//
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 16.dp, vertical = 8.dp),
-//                horizontalArrangement = Arrangement.SpaceEvenly
-//            ) {
-//                // Dashboard Button
-//                Button(
-//                    onClick = { navController.navigate(Routes.STUDENT_DASHBOARD) },
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color(0xFF1B2A80)
-//                    ),
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .padding(horizontal = 4.dp)
-//                        .height(48.dp)
-//                ) {
-//                    Text("Dashboard", fontSize = 12.sp)
-//                }
-//
-//                // Home Button
-//                Button(
-//                    onClick = { /* Already on this screen */ },
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color(0xFF1B2A80)
-//                    ),
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .padding(horizontal = 4.dp)
-//                        .height(48.dp)
-//                ) {
-//                    Text("Internships", fontSize = 12.sp)
-//                }
-//
-//                // Profile Button
-//                Button(
-//                    onClick = {  },
-//                    colors = ButtonDefaults.buttonColors(
-//                        containerColor = Color(0xFF1B2A80)
-//                    ),
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .padding(horizontal = 4.dp)
-//                        .height(48.dp)
-//                ) {
-//                    Text("Profile", fontSize = 12.sp)
-//                }
-//            }
-//        }
+        // Bottom Navigation Buttons
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Divider(
+                color = Color.LightGray,
+                thickness = 1.dp,
+                modifier = Modifier.padding(vertical = 32.dp)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Dashboard Button
+                Button(
+                    onClick = { navController.navigate(Routes.STUDENT_DASHBOARD) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1B2A80)
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 4.dp)
+                        .height(48.dp)
+                ) {
+                    Text("Dashboard", fontSize = 12.sp)
+                }
+
+                // Home Button
+                Button(
+                    onClick = { /* Already on this screen */ },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1B2A80)
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 4.dp)
+                        .height(48.dp)
+                ) {
+                    Text("Internships", fontSize = 12.sp)
+                }
+
+                // Profile Button
+                Button(
+                    onClick = {navController.navigate(Routes.PROFILE)  },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1B2A80)
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 4.dp)
+                        .height(48.dp)
+                ) {
+                    Text("Profile", fontSize = 12.sp)
+                }
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.site7x24learn.internshipfrontend.domain.repositories.ApplicationRepos
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.StudentStatusRepository
+import com.site7x24learn.internshipfrontend.domain.repositories.UserRepository
 import com.site7x24learn.internshipfrontend.domain.usecases.application.CheckExistingApplicationUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.application.CreateApplicationUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.application.DeleteApplicationUseCase
@@ -19,6 +20,9 @@ import com.site7x24learn.internshipfrontend.domain.usecases.internships.GetCateg
 import com.site7x24learn.internshipfrontend.domain.usecases.internships.GetInternshipByIdUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.internships.GetInternshipsUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.internships.UpdateInternshipUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.profile.DeleteProfileUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.profile.GetProfileUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.profile.UpdateProfileUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.student.UpdateStudentStatusUseCase
 import dagger.Module
 import dagger.Provides
@@ -93,5 +97,19 @@ object UseCaseModule {
     @Provides
     fun provideUpdateStudentStatusUseCase(repository: StudentStatusRepository): UpdateStudentStatusUseCase {
         return UpdateStudentStatusUseCase(repository)
+    }
+    @Provides
+    fun provideGetProfileUseCase(repository: UserRepository): GetProfileUseCase {
+        return GetProfileUseCase(repository)
+    }
+
+    @Provides
+    fun provideUpdateProfileUseCase(repository: UserRepository): UpdateProfileUseCase {
+        return UpdateProfileUseCase(repository)
+    }
+
+    @Provides
+    fun provideDeleteProfileUseCase(repository: UserRepository): DeleteProfileUseCase {
+        return DeleteProfileUseCase(repository)
     }
 }

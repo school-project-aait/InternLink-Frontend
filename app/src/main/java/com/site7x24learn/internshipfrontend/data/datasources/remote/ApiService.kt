@@ -5,6 +5,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.request.Crea
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.LoginRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateInternshipRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateProfileRequestDto
 
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationListResponse
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationsResponseDto
@@ -13,7 +14,9 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.response.Cre
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.DropdownDataResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipListResponseDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.InternshipResponseDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.ProfileDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.SingleApplicationResponse
+import com.site7x24learn.internshipfrontend.data.datasources.models.response.UserDto
 
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -103,6 +106,17 @@ interface ApiService {
         @Path("id") id: Int,
         @Body request: String
     ): Response<BaseResponseDto>
+    @GET("api/users/profile")
+    suspend fun getProfile(): Response<ProfileDto>
+
+    @PUT("api/users/{id}")
+    suspend fun updateProfile(
+        @Path("id") id: Int,
+        @Body request: UpdateProfileRequestDto
+    ): Response<UserDto>
+
+    @DELETE("api/users/{id}")
+    suspend fun deleteProfile(@Path("id") id: Int)
 
 //    // Student Endpoints
 //    @POST("api/student/{id}/profile")

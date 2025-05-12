@@ -2,14 +2,20 @@ package com.site7x24learn.internshipfrontend.di
 
 import com.site7x24learn.internshipfrontend.data.datasources.local.PreferencesManager
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
+import com.site7x24learn.internshipfrontend.data.datasources.remote.UserRemoteDataSource
 import com.site7x24learn.internshipfrontend.data.repositories.ApplicationRepositoryImpl
 import com.site7x24learn.internshipfrontend.data.repositories.AuthRepositoryImpl
 import com.site7x24learn.internshipfrontend.data.repositories.InternshipRepositoryImpl
 import com.site7x24learn.internshipfrontend.data.repositories.StudentStatusRepositoryImpl
+import com.site7x24learn.internshipfrontend.data.repositories.UserRepositoryImpl
 import com.site7x24learn.internshipfrontend.domain.repositories.ApplicationRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.AuthRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.InternshipRepository
 import com.site7x24learn.internshipfrontend.domain.repositories.StudentStatusRepository
+import com.site7x24learn.internshipfrontend.domain.repositories.UserRepository
+import com.site7x24learn.internshipfrontend.domain.usecases.profile.DeleteProfileUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.profile.GetProfileUseCase
+import com.site7x24learn.internshipfrontend.domain.usecases.profile.UpdateProfileUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.student.GetStudentsUseCase
 import com.site7x24learn.internshipfrontend.domain.usecases.student.UpdateStudentStatusUseCase
 import dagger.Module
@@ -61,4 +67,11 @@ object RepositoryModule {
     fun provideGetStudentsUseCase(repository: StudentStatusRepository): GetStudentsUseCase {
         return GetStudentsUseCase(repository)
     }
+    @Provides
+    @Singleton
+    fun provideUserRepository(remoteDataSource: UserRemoteDataSource): UserRepository {
+        return UserRepositoryImpl(remoteDataSource)
+    }
+
+
 }

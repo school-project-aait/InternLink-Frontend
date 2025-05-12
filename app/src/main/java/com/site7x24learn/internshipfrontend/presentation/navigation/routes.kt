@@ -11,7 +11,9 @@ object Routes {
     const val APPLY_INTERNSHIP = "apply_internship/{internshipId}?applicationId={applicationId}"
     const val INTERNSHIP_LIST="internship_list"
     const val STUDENT_APPLICATIONS = "student_applications"
+    const val PROFILE = "profile"
 //    const val UPDATE_APPLICATION = "update_application/{applicationId}"
+
 
 //    fun editInternshipRoute(internshipId:Int)="edit_internship/$internshipId"
     // ... existing routes
