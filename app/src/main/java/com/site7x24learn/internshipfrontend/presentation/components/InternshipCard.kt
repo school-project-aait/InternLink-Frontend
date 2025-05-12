@@ -2,10 +2,12 @@ package com.site7x24learn.internshipfrontend.presentation.components
 
 
 
+
+
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -16,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.site7x24learn.internshipfrontend.domain.models.internships.Internship
 
 @Composable
@@ -35,11 +39,7 @@ fun InternshipCard(
     val cardShape = RoundedCornerShape(16.dp)
     val statusShape = RoundedCornerShape(20.dp)
 
-    // Parse requirements from description
-    val requirements = internship.description?.split("\n")
-        ?.filter { it.trim().startsWith("-") || it.trim().startsWith("•") }
-        ?.map { it.trim().removePrefix("-").removePrefix("•").trim() }
-        ?: emptyList()
+    val requirements = internship.description?.split("\n")?.map { it.trim() } ?: emptyList()
 
     Card(
         modifier = modifier
@@ -47,9 +47,9 @@ fun InternshipCard(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         shape = cardShape,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = Color(0xFFD6EAF8)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
@@ -98,38 +98,45 @@ fun InternshipCard(
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(8.dp))
-
             // Category and Company Row
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 5.dp)
             ) {
                 // Category Chip
                 Box(
                     modifier = Modifier
-                        .clip(statusShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                        .border(
+                            width = 1.dp,
+                            color = Color(0xFF2196F3),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .background(Color.White, shape = RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
                         text = internship.categoryName,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = Color(0xFF2196F3),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(6.dp))
 
                 // Company
                 Text(
-                    text = internship.companyName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = Color.Black, fontWeight = FontWeight.Bold)) {
+                            append("\n Company: ")
+                        }
+                        withStyle(style = SpanStyle(color = Color(0xFF2196F3), fontWeight = FontWeight.Bold)) {
+                            append(internship.companyName)
+                        }
+                    },
+                    modifier = Modifier.padding(vertical = 5.dp),
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
 
@@ -138,11 +145,10 @@ fun InternshipCard(
             // Requirements Section
             if (requirements.isNotEmpty()) {
                 Text(
-                    text = "Requirements:",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
+                    text = "Requirements:", // use your model's field directly
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color.Black,
+                    modifier = Modifier.padding(vertical = 5.dp)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -180,14 +186,10 @@ fun InternshipCard(
                 // Deadline
                 Column {
                     Text(
-                        text = "Deadline",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                    Text(
-                        text = internship.deadline,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        text = "Deadline: ${internship.deadline}",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = Color.Black,
+                        modifier = Modifier.padding(vertical = 5.dp)
                     )
                 }
 
@@ -216,22 +218,8 @@ fun InternshipCard(
                             }
                         )
                     }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    // Active Indicator
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (internship.isActive == 1) Color(0xFF4CAF50)
-                                else Color(0xFF9E9E9E)
-                            )
-                    )
                 }
             }
         }
     }
 }
-

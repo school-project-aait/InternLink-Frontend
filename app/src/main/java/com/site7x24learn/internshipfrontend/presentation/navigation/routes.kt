@@ -12,6 +12,7 @@ object Routes {
     const val INTERNSHIP_LIST="internship_list"
     const val STUDENT_APPLICATIONS = "student_applications"
     const val PROFILE = "profile"
+    const val STUDENT_STATUS="student_status"
 //    const val UPDATE_APPLICATION = "update_application/{applicationId}"
 
 
@@ -20,5 +21,5 @@ object Routes {
     const val EDIT_INTERNSHIP = "edit_internship/{internshipId}"
 
     fun editInternshipRoute(internshipId: Int) = "edit_internship/$internshipId"
-    const val STUDENT_STATUS="student_status"
+
 }
