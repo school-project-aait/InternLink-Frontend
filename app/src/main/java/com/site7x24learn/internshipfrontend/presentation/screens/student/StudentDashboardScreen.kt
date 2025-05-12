@@ -14,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.site7x24learn.internshipfrontend.domain.models.application.Application
 import com.site7x24learn.internshipfrontend.presentation.components.ApplicationCard
+import com.site7x24learn.internshipfrontend.presentation.components.HeaderComponent
 import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.StudentDashboardViewModel
 
@@ -37,29 +39,11 @@ fun StudentDashboardScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "My Applications",
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1B2A80))
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                actions = {
-                    if (state.isLoading && !isRefreshing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(end = 16.dp),
-                            strokeWidth = 2.dp
-                        )
+            HeaderComponent(
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+                onLogout = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0)
                     }
                 }
             )
@@ -128,6 +112,7 @@ private fun EmptyScreen() {
     }
 }
 
+
 @Composable
 private fun ApplicationsList(
     applications: List<Application>,
@@ -158,21 +143,45 @@ private fun ApplicationsList(
                     val updates = buildMap<String, Any> {
                         put("university", application.university)
                         put("degree", application.degree)
-                        put("graduation_year", application.graduationYear.toString().toInt())
+                        put("graduationYear", application.graduationYear)
                         application.linkdIn?.let { put("linkdIn", it) } // Only include if not null
                     }
 
                     viewModel.updateApplication(application.id, updates) {
                         navController.navigate(
-                            "${Routes.APPLY_INTERNSHIP}/${application.internshipId}"
-                        ) {
+                            Routes.applyInternshipRoute(application.internshipId, application.id)
+                        )
+                        {
                             launchSingleTop = true
-                            // Preserve back stack while ensuring fresh data
                             restoreState = true
                         }
+
+
                     }
                 }
             )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // other UI elements...
+
+                Button(
+                    onClick = { navController.navigate(Routes.INTERNSHIP_LIST) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1B2A80)
+                    ),
+                    modifier = Modifier
+                        .padding(top = 40.dp) // <-- top padding
+                        .height(48.dp)
+                ) {
+                    Text("Dashboard", fontSize = 12.sp)
+                }
+
+                // other UI elements...
+            }
+
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.site7x24learn.internshipfrontend.presentation.screens.profile
 
 
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -15,11 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.site7x24learn.internshipfrontend.domain.models.internships.Category
 import com.site7x24learn.internshipfrontend.domain.models.user.UserProfile
-import com.site7x24learn.internshipfrontend.presentation.components.CategoryDropdown
+import com.site7x24learn.internshipfrontend.presentation.components.HeaderComponent
 import com.site7x24learn.internshipfrontend.presentation.navigation.Routes
 import com.site7x24learn.internshipfrontend.presentation.viewmodels.ProfileViewModel
+import com.site7x24learn.internshipfrontend.utils.DateUtils
 import kotlinx.coroutines.launch
 
 @Composable
@@ -30,16 +31,23 @@ fun ProfileScreen(navController: NavHostController) {
     val error by viewModel.error.collectAsState()
     val context = LocalContext.current
 
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { shouldNavigate ->
+            if (shouldNavigate) {
+                navController.navigate(Routes.INTERNSHIP_LIST) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
+
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var dob by remember { mutableStateOf("") }
-    var selectedGenderId by remember { mutableStateOf<Int?>(null) }
-
-    val genderOptions = listOf(
-        Category(1, "Male"),
-        Category(2, "Female")
-    )
 
     LaunchedEffect(Unit) {
         viewModel.getProfile()
@@ -52,15 +60,18 @@ fun ProfileScreen(navController: NavHostController) {
                 name = profile.name
                 phone = profile.phone ?: ""
                 address = profile.address ?: ""
-                dob = profile.birthDate ?: ""
-                selectedGenderId = genderOptions.find { it.name == profile.gender }?.id
+                dob = if (DateUtils.isIsoDate(profile.birthDate)) {
+                    DateUtils.formatDateString(profile.birthDate)
+                } else {
+                    profile.birthDate ?: ""
+                }
             }
             is ProfileViewModel.ProfileUiState.Deleted -> {
                 // Handle navigation after deletion
                 navController.popBackStack()
                 // Optionally navigate to login screen
                 navController.navigate(Routes.LOGIN) {
-                    popUpTo(Routes.PROFILE) { inclusive = true }
+                    popUpTo(Routes.LANDING_PAGE) { inclusive = true }
                 }
             }
             else -> {}
@@ -70,10 +81,18 @@ fun ProfileScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(18.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        HeaderComponent(
+            modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 10.dp),
+            onLogout = {
+                navController.navigate(Routes.LOGIN) {
+                    popUpTo(0)
+                }
+            }
+        )
         Text("Profile", fontSize = 28.sp, modifier = Modifier.padding(bottom = 16.dp))
 
         if (error != null) {
@@ -121,38 +140,23 @@ fun ProfileScreen(navController: NavHostController) {
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         )
 
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Gender",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            CategoryDropdown(
-                categories = genderOptions,
-                selectedCategoryId = selectedGenderId,
-                onCategorySelected = { selectedGenderId = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            )
-        }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                val selectedGender = genderOptions.find { it.id == selectedGenderId }?.name ?: ""
                 val updatedProfile = UserProfile(
                     id = (uiState as? ProfileViewModel.ProfileUiState.Success)?.profile?.id ?: 0,
                     name = name,
-                    email =  "",
-                    gender = selectedGender,
+                    email = "",
                     birthDate = dob,
                     phone = phone,
                     address = address,
                     role = (uiState as? ProfileViewModel.ProfileUiState.Success)?.profile?.role
                 )
                 viewModel.updateProfile(updatedProfile)
+
+
+
             },
             enabled = !isLoading,
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
@@ -179,17 +183,5 @@ fun ProfileScreen(navController: NavHostController) {
                 Text("Delete Profile")
             }
         }
-//        Button(
-//            onClick = {navController.navigate(Routes.INTERNSHIP_LIST)  },
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = Color(0xFF1B2A80)
-//            ),
-//            modifier = Modifier
-//                .weight(1f)
-//                .padding(horizontal = 4.dp)
-//                .height(20.dp)
-//        ) {
-//            Text("Internships", fontSize = 12.sp)
-//        }
     }
 }

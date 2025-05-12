@@ -41,21 +41,19 @@ fun StudentInternshipListScreen(
     ) {
         // Header Section
         HeaderComponent(
-            title = "Available Internships",
-            onBack = { navController.popBackStack() },
+            modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 20.dp),
             onLogout = {
                 navController.navigate(Routes.LOGIN) {
                     popUpTo(0)
                 }
-            },
-            buttonText = "Logout"
+            }
         )
 
         // Main Content Section
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 16.dp)
+                .padding(16.dp)
         ) {
             when {
                 state.isLoading -> {
@@ -106,18 +104,16 @@ fun StudentInternshipListScreen(
 
         // Bottom Navigation Buttons
         Column(
+
             modifier = Modifier.fillMaxWidth()
+                .padding(top = 10.dp, bottom = 10.dp)
         ) {
-            Divider(
-                color = Color.LightGray,
-                thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 32.dp)
-            )
+            HorizontalDivider()
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 // Dashboard Button
@@ -136,7 +132,7 @@ fun StudentInternshipListScreen(
 
                 // Home Button
                 Button(
-                    onClick = { /* Already on this screen */ },
+                    onClick = { navController.navigate(Routes.LANDING_PAGE) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF1B2A80)
                     ),
@@ -145,7 +141,7 @@ fun StudentInternshipListScreen(
                         .padding(horizontal = 4.dp)
                         .height(48.dp)
                 ) {
-                    Text("Internships", fontSize = 12.sp)
+                    Text("Home", fontSize = 12.sp)
                 }
 
                 // Profile Button

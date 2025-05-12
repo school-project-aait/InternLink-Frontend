@@ -49,9 +49,9 @@ class StudentStatusRepositoryImpl(
 
     override suspend fun updateStatus(id: Int, status: String) {
         // Create an instance of UpdateStatusRequestDto with the status string
-        val requestDto = UpdateStatusRequestDto(status)
+        val request = UpdateStatusRequestDto(status)
 
         // Now call the API with the correct type
-        api.updateApplicationStatus(id, requestDto.toString())
+        api.updateApplicationStatus(id, request)
     }
 }

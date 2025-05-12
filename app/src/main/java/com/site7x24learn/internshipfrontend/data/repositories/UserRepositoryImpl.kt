@@ -21,7 +21,7 @@ class UserRepositoryImpl @Inject constructor(
         val requestDto = UpdateProfileRequestDto(
             name = profile.name,
 
-            gender = profile.gender ?: "",
+            
             birthDate = profile.birthDate ?: "",
             phone = profile.phone ?: "",
             address = profile.address ?: "",
@@ -51,7 +51,6 @@ class UserRepositoryImpl @Inject constructor(
             id = this.id,
             name = this.name?: "Unknown",
             email = this.email,
-            gender = this.gender,
             birthDate = this.birthDate,
             phone = this.phone,
             address = this.address,

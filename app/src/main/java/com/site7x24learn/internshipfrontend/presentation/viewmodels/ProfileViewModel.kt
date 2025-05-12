@@ -13,9 +13,11 @@ import com.site7x24learn.internshipfrontend.domain.usecases.profile.GetProfileUs
 import com.site7x24learn.internshipfrontend.domain.usecases.profile.UpdateProfileUseCase
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -30,6 +32,9 @@ class ProfileViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
+//    private val _updateSuccess = MutableStateFlow(false)
+//    val updateSuccess: StateFlow<Boolean> = _updateSuccess.asStateFlow()
+
     private val _uiState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
@@ -38,6 +43,9 @@ class ProfileViewModel @Inject constructor(
 
     private val _error = MutableStateFlow<String?>(null)
     val error = _error.asStateFlow()
+    // Add navigation event channel
+    private val _navigationEvent = Channel<Boolean>(Channel.BUFFERED)
+    val navigationEvent = _navigationEvent.receiveAsFlow()
 
     sealed class ProfileUiState {
         object Loading : ProfileUiState()
@@ -77,7 +85,7 @@ class ProfileViewModel @Inject constructor(
                 val requestDto = UpdateProfileRequestDto(
                     name = profile.name,
 
-                    gender = profile.gender ?: "", // Handle nulls
+
                     birthDate = profile.birthDate ?: "", // Handle nulls
                     phone = profile.phone ?: "", // Handle nulls
                     address = profile.address ?: "", // Handle nulls
@@ -86,11 +94,19 @@ class ProfileViewModel @Inject constructor(
                 println("Request DTO: ${Gson().toJson(requestDto)}")
 
                 // 3. Make the API call
-                val updatedProfile = updateUserProfileUseCase(profile)
+//                val updatedProfile = updateUserProfileUseCase(profile)
 
                 // 4. Verify the response
-                println("Update successful: $updatedProfile")
+//                println("Update successful: $updatedProfile")
+
+
+                val updatedProfile = updateUserProfileUseCase(profile)
                 _uiState.value = ProfileUiState.Success(updatedProfile)
+//                _uiState.value = ProfileUiState.Success(updatedProfile)
+
+                // Send navigation event
+                _navigationEvent.send(true)
+//                _updateSuccess.value = true // Set success flag
 
             } catch (e: Exception) {
                 // Enhanced error handling
@@ -111,6 +127,9 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+//    fun resetUpdateState() {
+//        _updateSuccess.value = false
+//    }
     fun deleteProfile() {
         viewModelScope.launch {
             _isLoading.value = true

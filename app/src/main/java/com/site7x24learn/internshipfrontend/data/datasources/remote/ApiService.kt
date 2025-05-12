@@ -6,6 +6,7 @@ import com.site7x24learn.internshipfrontend.data.datasources.models.request.Logi
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.SignUpRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateInternshipRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateProfileRequestDto
+import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateStatusRequestDto
 
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationListResponse
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ApplicationsResponseDto
@@ -104,7 +105,7 @@ interface ApiService {
     @PATCH("api/applications/{id}/status")
     suspend fun updateApplicationStatus(
         @Path("id") id: Int,
-        @Body request: String
+        @Body request: UpdateStatusRequestDto
     ): Response<BaseResponseDto>
     @GET("api/users/profile")
     suspend fun getProfile(): Response<ProfileDto>

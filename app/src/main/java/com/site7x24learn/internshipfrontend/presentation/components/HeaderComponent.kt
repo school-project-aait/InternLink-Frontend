@@ -16,32 +16,27 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun HeaderComponent(
-    title: String = "",
-    onBack: () -> Unit = {},
     onLogout: () -> Unit,
-    buttonText: String = "Logout",
+    buttonText:String="Logout",
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 48.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+            .padding(top = 48.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color(0xFF1B2A80))
-            }
-            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = title,
-                fontSize = 24.sp,
-                color = Color(0xFF1B2A80),
-                modifier = Modifier.padding(start = 8.dp)
+                text = "Intern",
+                fontSize = 40.sp,
+                color = Color(0xFF1B2A80)
+            )
+            Text(
+                text = "Link",
+                fontSize = 40.sp,
+                color = Color(0xFF2196F3)
             )
         }
 

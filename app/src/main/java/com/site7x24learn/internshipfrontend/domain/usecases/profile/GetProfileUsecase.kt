@@ -15,7 +15,7 @@ class GetProfileUseCase @Inject constructor(
                 id = userDto.id,
                 name = userDto.name ?: "",
                 email = userDto.email,
-                gender = userDto.gender,
+
                 birthDate = userDto.birthDate,
                 phone = userDto.phone,
                 address = userDto.address,

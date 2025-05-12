@@ -2,6 +2,7 @@ package com.site7x24learn.internshipfrontend.data.repositories
 
 
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.ApplicationUpdateRequest
+import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateStatusRequestDto
 
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
 import com.site7x24learn.internshipfrontend.domain.models.application.Application
@@ -181,7 +182,7 @@ class ApplicationRepositoryImpl @Inject constructor(
         status: ApplicationStatus
     ): Resource<Boolean> {
         return try {
-            apiService.updateApplicationStatus(applicationId, status.name)
+            apiService.updateApplicationStatus(applicationId, UpdateStatusRequestDto(status=status.name))
             Resource.Success(true)
         } catch (e: HttpException) {
             Resource.Error(e.message ?: "An error occurred")

@@ -1,3 +1,4 @@
+
 package com.site7x24learn.internshipfrontend.presentation.viewmodels
 
 
@@ -103,6 +104,7 @@ class StudentDashboardViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
+
 
             when (val result = repository.updateApplication(applicationId, updates)) {
                 is Resource.Success -> {

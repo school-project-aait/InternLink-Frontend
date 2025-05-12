@@ -51,11 +51,14 @@ fun AddInternships(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeaderComponent(onLogout = {
-            navController.navigate(Routes.LOGIN) {
-                popUpTo(Routes.ADD_INTERNSHIP) { inclusive = true }
+        HeaderComponent(
+            modifier = Modifier.padding(start = 15.dp, end = 15.dp),
+            onLogout = {
+                navController.navigate(Routes.LOGIN) {
+                    popUpTo(0)
+                }
             }
-        })
+        )
 
         Card(
             modifier = Modifier.fillMaxWidth(),

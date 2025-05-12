@@ -20,6 +20,8 @@ import com.site7x24learn.internshipfrontend.presentation.screens.admin.StudentSt
 
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.LoginScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.auth.SignUpScreen
+import com.site7x24learn.internshipfrontend.presentation.screens.common.WaitingPage
+import com.site7x24learn.internshipfrontend.presentation.screens.home.HomePage
 import com.site7x24learn.internshipfrontend.presentation.screens.profile.ProfileScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.ApplyInternshipScreen
 import com.site7x24learn.internshipfrontend.presentation.screens.student.StudentDashboardScreen
@@ -48,13 +50,19 @@ fun AuthApp() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.SIGN_UP
+        startDestination = Routes.LANDING_PAGE
     ) {
         composable(Routes.SIGN_UP) {
             SignUpScreen(navController = navController)
         }
         composable(Routes.LOGIN) {
             LoginScreen(navController = navController)
+        }
+        composable(Routes.LANDING_PAGE){
+            HomePage(navController=navController)
+        }
+        composable(Routes.WAITING_PAGE){
+            WaitingPage(navController=navController)
         }
         composable(Routes.ADMIN_DASHBOARD){
             AdminDashboard(navController=navController)
@@ -80,6 +88,7 @@ fun AuthApp() {
             val dashboardViewModel: StudentDashboardViewModel = hiltViewModel()
 
             ApplyInternshipScreen(
+                navController=navController,
                 internshipId = internshipId,
                 applicationId = applicationId,
                 onBack = { navController.popBackStack() },  // Handle back navigation

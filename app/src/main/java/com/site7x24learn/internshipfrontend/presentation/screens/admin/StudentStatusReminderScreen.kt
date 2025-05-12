@@ -87,11 +87,14 @@ fun StudentStatusReminderScreen(viewModel: StudentStatusViewModel= hiltViewModel
 
         }
         RoundedBorderButtonForApplication (
+            onClick = {
+                navController?.navigate(Routes.ADMIN_DASHBOARD) {
+                    popUpTo(Routes.STUDENT_STATUS) { inclusive = true }
+                }
+            },
             buttonText = "Back to Dashboard",
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .padding(20.dp)
-        ) {
-            // Apply logic here
-        }
+        )
     }
 }
