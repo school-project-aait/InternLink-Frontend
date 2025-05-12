@@ -1,5 +1,6 @@
 package com.site7x24learn.internshipfrontend.presentation.navigation
 
+//holds route definitions used for navigation through out the app
 object Routes {
     const val LOGIN = "login"
     const val SIGN_UP = "signup"
@@ -17,7 +18,7 @@ object Routes {
     const val WAITING_PAGE="waiting"
 //    const val UPDATE_APPLICATION = "update_application/{applicationId}"
 
-
+//generates route for editing the internship, takes ID as a parameter
 //    fun editInternshipRoute(internshipId:Int)="edit_internship/$internshipId"
     // ... existing routes
     const val EDIT_INTERNSHIP = "edit_internship/{internshipId}"
