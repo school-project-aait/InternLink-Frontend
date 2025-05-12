@@ -12,3 +12,4 @@ data class UserDto(
     @SerializedName("address") val address: String,
     @SerializedName("role") val role: String
 )
+

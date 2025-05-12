@@ -1,5 +1,7 @@
 package com.site7x24learn.internshipfrontend.data.datasources.models.request
 
+
+
 import com.google.gson.annotations.SerializedName
 
 data class UpdateProfileRequestDto(
@@ -10,4 +12,3 @@ data class UpdateProfileRequestDto(
     @SerializedName("phone") val phone: String,
     @SerializedName("address") val address: String,
 )
-

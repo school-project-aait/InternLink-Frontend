@@ -1,6 +1,8 @@
 package com.site7x24learn.internshipfrontend.data.repositories
 
+
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.ApplicationUpdateRequest
+
 import com.site7x24learn.internshipfrontend.data.datasources.remote.ApiService
 import com.site7x24learn.internshipfrontend.domain.models.application.Application
 import com.site7x24learn.internshipfrontend.domain.models.application.ApplicationRequest
@@ -8,8 +10,11 @@ import com.site7x24learn.internshipfrontend.domain.models.application.Applicatio
 import com.site7x24learn.internshipfrontend.domain.repositories.ApplicationRepository
 import com.site7x24learn.internshipfrontend.utils.Resource
 import okhttp3.MediaType.Companion.toMediaType
+
 import okhttp3.MultipartBody
+
 import okhttp3.RequestBody.Companion.toRequestBody
+
 import javax.inject.Inject
 import retrofit2.HttpException
 

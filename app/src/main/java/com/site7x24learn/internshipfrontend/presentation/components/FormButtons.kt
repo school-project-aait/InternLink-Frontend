@@ -1,8 +1,5 @@
 package com.site7x24learn.internshipfrontend.presentation.components
 
-
-
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -26,7 +23,6 @@ fun FormButtons(
         ) {
             Text("Submit")
         }
-
         OutlinedButton(onClick = onCancel) {
             Text("Reset")
         }
