@@ -1,7 +1,6 @@
 package com.site7x24learn.internshipfrontend.presentation.viewmodels
 
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
@@ -142,3 +141,4 @@ class ProfileViewModel @Inject constructor(
 
     }
 }
+

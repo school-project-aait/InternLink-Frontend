@@ -95,6 +95,10 @@ fun AuthApp() {
         composable(Routes.PROFILE) {
             ProfileScreen(navController = navController)
         }
+        composable(Routes.PROFILE) {
+            ProfileScreen(navController = navController)
+        }
+
 
 
 

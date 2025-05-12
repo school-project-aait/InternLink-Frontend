@@ -1,11 +1,13 @@
 package com.site7x24learn.internshipfrontend.presentation.screens.profile
 
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -119,12 +121,21 @@ fun ProfileScreen(navController: NavHostController) {
             modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
         )
 
-        CategoryDropdown(
-            categories = genderOptions,
-            selectedCategoryId = selectedGenderId,
-            onCategorySelected = { selectedGenderId = it },
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-        )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "Gender",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+            CategoryDropdown(
+                categories = genderOptions,
+                selectedCategoryId = selectedGenderId,
+                onCategorySelected = { selectedGenderId = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -168,5 +179,17 @@ fun ProfileScreen(navController: NavHostController) {
                 Text("Delete Profile")
             }
         }
+//        Button(
+//            onClick = {navController.navigate(Routes.INTERNSHIP_LIST)  },
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = Color(0xFF1B2A80)
+//            ),
+//            modifier = Modifier
+//                .weight(1f)
+//                .padding(horizontal = 4.dp)
+//                .height(20.dp)
+//        ) {
+//            Text("Internships", fontSize = 12.sp)
+//        }
     }
 }

@@ -1,6 +1,5 @@
 package com.site7x24learn.internshipfrontend.data.repositories
 
-
 import com.site7x24learn.internshipfrontend.data.datasources.models.request.UpdateProfileRequestDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.ProfileDto
 import com.site7x24learn.internshipfrontend.data.datasources.models.response.UserDto
@@ -60,6 +59,3 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 }
-
-
-
